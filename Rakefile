@@ -25,6 +25,21 @@ Rake::GemPackageTask.new(GEM) do |package|
   package.need_zip = false
 end
 
+desc "Deployment on Github and Gemcutter."
+namespace :deployment do 
+  task :github do
+    sh 'git checkout master'
+    sh 'git merge development'
+    sh 'git push rock-n-code master --tags'
+    sh 'git push server master --tags'
+    sh 'git checkout development'
+  end
+  
+  task :gemcutter => [:package] do
+    sh 'gem19 push pkg/*.gem'
+  end
+end
+
 desc 'Functional testing with RSpec.'
 Spec::Rake::SpecTask.new :spec do |task|
   task.spec_opts = %w[--options spec/opts/spec.opts]
@@ -41,3 +56,5 @@ Spec::Rake::SpecTask.new(:rcov) do |task|
   task.rcov = true
   task.rcov_opts = IO.readlines('spec/opts/rcov.opts').each{|line| line.chomp!}
 end
+
+task :deploy => ['deployment:github', 'deployment:gemcutter']
