@@ -35,7 +35,7 @@ namespace :deployment do
     sh 'git checkout development'
   end
   
-  task :gemcutter => [:package] do
+  task :gemcutter => [:clean, :package] do
     sh 'gem19 push pkg/*.gem'
   end
 end
