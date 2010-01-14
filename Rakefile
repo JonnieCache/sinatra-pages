@@ -6,9 +6,6 @@ require 'spec/rake/spectask'
 
 CLEAN.include %w[coverage/ doc/ pkg/]
 
-desc 'Load the GemSpec definition file.'
-load 'sinatra-pages.gemspec'
-
 desc 'Documentation generation.'
 Rake::RDocTask.new :rdoc do |documentation|
   documentation.rdoc_files.add(%w(README LICENSE lib/**/*.rb))
@@ -17,6 +14,9 @@ Rake::RDocTask.new :rdoc do |documentation|
   documentation.rdoc_dir = 'doc'
   documentation.options = %w[--line-numbers --inline-source --charset=UTF-8]
 end
+
+desc 'Load the GemSpec definition file.'
+load 'sinatra-pages.gemspec'
 
 desc 'Package building.'
 Rake::GemPackageTask.new(GEM) do |package|
@@ -33,6 +33,7 @@ Spec::Rake::SpecTask.new :spec do |task|
   task.rcov = false
 end
 
+desc 'Functional testing with RSpec and RCov.'
 Spec::Rake::SpecTask.new(:rcov) do |task|
   task.spec_opts = %w[--options spec/opts/spec.opts]
   task.libs = %w[lib spec]
