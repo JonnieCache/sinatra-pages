@@ -3,12 +3,12 @@ require 'haml'
 
 module Sinatra
   class Pages < Sinatra::Base
-    get '/?' do
-      haml :home
-    end
-    
-    get '/:page' do 
-      haml params[:page].to_sym
+    %w[/? /:page].each do |route|
+      get route do
+        params[:page] = 'home' if params[:page].nil?
+        
+        haml params[:page].to_sym
+      end
     end
   end
 end
