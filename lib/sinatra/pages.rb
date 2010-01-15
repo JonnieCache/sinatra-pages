@@ -9,7 +9,7 @@ module Sinatra
         
         begin
           haml params[:page].to_sym
-        rescue 
+        rescue Errno::ENOENT
           halt 404
         end
       end
