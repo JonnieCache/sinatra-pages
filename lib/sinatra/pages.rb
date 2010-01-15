@@ -3,7 +3,7 @@ require 'haml'
 
 module Sinatra
   class Pages < Sinatra::Base
-    get '/' do
+    get '/?' do
       haml :home
     end
   end
