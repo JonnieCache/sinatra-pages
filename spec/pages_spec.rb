@@ -7,17 +7,19 @@ describe Sinatra::Pages do
     Sinatra::Pages
   end
 
+  PAGES = ['Home', 'Generic', 'Generic Test', 'Another Generic Test']
+
+  file_of = ->(page){page.downcase.gsub ' ', '_'}
+  create_file_for = ->(page){File.open("views/#{file_of.(page)}.haml", 'w'){|file| file << page}}
+
   before :all do
     FileUtils.mkdir 'views'
-    File.open('views/home.haml', 'w'){|file| file << 'Home'}
-    File.open('views/generic.haml', 'w'){|file| file << 'Generic'}
-    File.open('views/generic_test.haml', 'w'){|file| file << 'Generic Test'}
-    File.open('views/another_generic_test.haml', 'w'){|file| file << 'Another Generic Test'}
+    PAGES.each{|page| create_file_for.(page)}
   end
   
   context "when using the HTTP GET request method" do
     it "should render the Home page if the given route is either empty or root." do
-      File.exist?('views/home.haml').should be_true
+      File.exist?("views/#{file_of.('Home')}.haml").should be_true
       
       ['/', ''].each do |route|
         get route
@@ -28,15 +30,13 @@ describe Sinatra::Pages do
     end
     
     it "should render an existing page if the given route match the '/:page' pattern." do
-      ['Generic', 'Generic Test', 'Another Generic Test'].each do |file|
-        filename = file.downcase.gsub(' ', '_')
-        
-        File.exist?("views/#{filename}.haml").should be_true
+      PAGES.each do |page|
+        File.exist?("views/#{file_of.(page)}.haml").should be_true
 
-        get "/#{filename}"
+        get "/#{file_of.(page)}"
         
         last_response.should be_ok
-        last_response.body.chomp.should == file
+        last_response.body.chomp.should == page
       end
     end
   end
