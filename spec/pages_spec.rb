@@ -4,10 +4,26 @@ describe Sinatra::Pages do
   include Rack::Test::Methods
   
   def app
-    Sinatra::Application
+    Sinatra::Pages
+  end
+
+  before :all do
+    FileUtils.mkdir 'views'
+    File.open('views/home.haml', 'w'){|file| file << 'Home'}
   end
   
-  it "does something" do
-    pending
+  context "when using the HTTP GET request method" do
+    it "should render the Home page if the given route is '/'" do
+      File.exist?('views/home.haml').should be_true
+      
+      get '/'
+      
+      last_response.should be_ok
+      last_response.body.chomp.should == 'Home'
+    end
+  end
+  
+  after :all do
+    FileUtils.rm_r 'views', :force => true
   end
 end
