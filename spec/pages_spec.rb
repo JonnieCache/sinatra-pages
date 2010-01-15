@@ -18,15 +18,14 @@ describe Sinatra::Pages do
     end
   end
     
-
   before :all do
     FileUtils.mkdir 'views'
     PAGES.each{|page| create_file_for.(page)}
   end
   
-  context "when using the HTTP GET request method" do
-    context "and there is no Layout file" do
-      it "should render the Home page only if the given route is either empty or root." do
+  context "uses HTTP GET request method" do
+    context "with no Layout file" do
+      it "should render just the Home page if the given route is either empty or root." do
         File.exist?("views/#{file_of.('Home')}.haml").should be_true
 
         ['/', ''].each do |route|
@@ -37,7 +36,7 @@ describe Sinatra::Pages do
         end
       end
 
-      it "should render an existing page only if the given route match the '/:page' pattern." do
+      it "should render just an existing page if the given route match the '/:page' pattern." do
         PAGES.each do |page|
           File.exist?("views/#{file_of.(page)}.haml").should be_true
 
@@ -48,7 +47,7 @@ describe Sinatra::Pages do
         end
       end
 
-      it "should render the Not Found page only if a given route can't find its static page on 'views/'." do
+      it "should render just the Not Found page if a given route can't find its static page on 'views/'." do
         File.exist?("views/#{file_of.('Do Not Exist')}.haml").should be_false
 
         get "/#{file_of.('Do Not Exist')}"
@@ -58,12 +57,12 @@ describe Sinatra::Pages do
       end
     end
     
-    context "and there is a Layout file" do
+    context "with a Layout file" do
       before :all do
         create_file_for.('Layout', ['Layout', '= yield'])
       end
       
-      it "should render the Layout and Home page if the given route is either empty or root." do
+      it "should render both the Layout and Home page if the given route is either empty or root." do
         File.exist?("views/#{file_of.('Layout')}.haml").should be_true
         File.exist?("views/#{file_of.('Home')}.haml").should be_true
 
@@ -76,7 +75,7 @@ describe Sinatra::Pages do
         end
       end
 
-      it "should render the Layout and an existing page if the given route match the '/:page' pattern." do
+      it "should render both the Layout and an existing page if the given route match the '/:page' pattern." do
         PAGES.each do |page|
           File.exist?("views/#{file_of.('Layout')}.haml").should be_true
           File.exist?("views/#{file_of.(page)}.haml").should be_true
@@ -89,7 +88,7 @@ describe Sinatra::Pages do
         end
       end
 
-      it "should render the Layout and the Not Found page if a given route can't find its static page on 'views/'." do
+      it "should render both the Layout and the Not Found page if a given route can't find its static page on 'views/'." do
         File.exist?("views/#{file_of.('Layout')}.haml").should be_true
         File.exist?("views/#{file_of.('Do Not Exist')}.haml").should be_false
 
