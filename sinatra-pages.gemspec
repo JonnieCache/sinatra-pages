@@ -8,9 +8,9 @@ GEM = Gem::Specification.new do |specification|
   specification.authors = ['Julio Javier Cicchelli']
   specification.email = 'javier@rock-n-code.com'
   specification.homepage = 'http://github.com/rock-n-code/sinatra-pages'
-  specification.summary = 'A Sinatra extension to manage static pages.'
+  specification.summary = 'A Sinatra extension for static pages rendering.'
   specification.description = <<-DESCRIPTION
-    A Sinatra extension to manage static pages.
+    A Sinatra extension for static pages rendering.
   DESCRIPTION
   specification.add_runtime_dependency 'sinatra', '>= 0.9.4'
   specification.add_runtime_dependency 'haml', '>= 2.2.17'
