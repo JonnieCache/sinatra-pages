@@ -10,7 +10,14 @@ describe Sinatra::Pages do
   PAGES = ['Home', 'Generic', 'Generic Test', 'Another Generic Test', 'Not Found']
 
   file_of = ->(page){page.downcase.gsub ' ', '_'}
-  create_file_for = ->(page){File.open("views/#{file_of.(page)}.haml", 'w'){|file| file << page}}
+  separate = ->(text){text.chomp.split("\n")}
+  create_file_for = ->(page, content=[]) do 
+    File.open("views/#{file_of.(page)}.haml", 'w') do |file| 
+      content.empty? ? file << page : 
+                       content.each{|line| file.puts line}
+    end
+  end
+    
 
   before :all do
     FileUtils.mkdir 'views'
@@ -53,7 +60,7 @@ describe Sinatra::Pages do
     
     context "and there is a Layout file" do
       before :all do
-        File.open('views/layout.haml', 'w'){|file| file.puts 'Layout'; file.puts '= yield'}
+        create_file_for.('Layout', ['Layout', '= yield'])
       end
       
       it "should render the Layout and Home page if the given route is either empty or root." do
@@ -64,8 +71,8 @@ describe Sinatra::Pages do
           get route
 
           last_response.should be_ok
-          last_response.body.chomp.split("\n").first.should == 'Layout'
-          last_response.body.chomp.split("\n").last.should == 'Home'
+          separate.(last_response.body).first.should == 'Layout'
+          separate.(last_response.body).last.should == 'Home'
         end
       end
 
@@ -77,8 +84,8 @@ describe Sinatra::Pages do
           get "/#{file_of.(page)}"
 
           last_response.should be_ok
-          last_response.body.chomp.split("\n").first.should == 'Layout'
-          last_response.body.chomp.split("\n").last.should == page
+          separate.(last_response.body).first.should == 'Layout'
+          separate.(last_response.body).last.should == page
         end
       end
 
@@ -89,8 +96,8 @@ describe Sinatra::Pages do
         get "/#{file_of.('Do Not Exist')}"
 
         last_response.should be_not_found
-        last_response.body.chomp.split("\n").first.should == 'Layout'
-        last_response.body.chomp.split("\n").last.should == 'Not Found'
+        separate.(last_response.body).first.should == 'Layout'
+        separate.(last_response.body).last.should == 'Not Found'
       end
       
       after :all do
