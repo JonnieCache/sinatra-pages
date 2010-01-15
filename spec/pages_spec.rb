@@ -18,6 +18,39 @@ describe Sinatra::Pages do
   end
   
   context "when using the HTTP GET request method" do
+    context "and there is no Layout file" do
+      it "should render the Layout and Home page if the given route is either empty or root." do
+        File.exist?("views/#{file_of.('Home')}.haml").should be_true
+
+        ['/', ''].each do |route|
+          get route
+
+          last_response.should be_ok
+          last_response.body.chomp.should == 'Home'
+        end
+      end
+
+      it "should render the Layout and an existing page if the given route match the '/:page' pattern." do
+        PAGES.each do |page|
+          File.exist?("views/#{file_of.(page)}.haml").should be_true
+
+          get "/#{file_of.(page)}"
+
+          last_response.should be_ok
+          last_response.body.chomp.should == page
+        end
+      end
+
+      it "should render the Layout and the Not Found page if a given route can't find its static page on 'views/'." do
+        File.exist?("views/#{file_of.('Do Not Exist')}.haml").should be_false
+
+        get "/#{file_of.('Do Not Exist')}"
+
+        last_response.should be_not_found
+        last_response.body.chomp.should == 'Not Found'
+      end
+    end
+    
     context "and there is a Layout file" do
       before :all do
         File.open('views/layout.haml', 'w'){|file| file.puts 'Layout'; file.puts '= yield'}
