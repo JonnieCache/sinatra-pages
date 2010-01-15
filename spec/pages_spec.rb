@@ -7,7 +7,7 @@ describe Sinatra::Pages do
     Sinatra::Pages
   end
 
-  PAGES = ['Home', 'Generic', 'Generic Test', 'Another Generic Test']
+  PAGES = ['Home', 'Generic', 'Generic Test', 'Another Generic Test', 'Not Found']
 
   file_of = ->(page){page.downcase.gsub ' ', '_'}
   create_file_for = ->(page){File.open("views/#{file_of.(page)}.haml", 'w'){|file| file << page}}
@@ -38,6 +38,15 @@ describe Sinatra::Pages do
         last_response.should be_ok
         last_response.body.chomp.should == page
       end
+    end
+    
+    it "should render the Not Found page if the given route can't find its static page on the 'views' directory." do
+      File.exist?("views/#{file_of.('Do Not Exist')}.haml").should be_false
+
+      get "/#{file_of.('Do Not Exist')}"
+      
+      last_response.should be_not_found
+      last_response.body.chomp.should == 'Not Found'
     end
   end
 
