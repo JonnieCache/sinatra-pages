@@ -16,7 +16,7 @@ describe Sinatra::Pages do
     it "should render the Home page if the given route is either empty or root." do
       File.exist?('views/home.haml').should be_true
       
-      %w[/ /?].each do |route|
+      ['/', ''].each do |route|
         get route
 
         last_response.should be_ok
