@@ -25,8 +25,8 @@ Rake::GemPackageTask.new(GEM) do |package|
   package.need_zip = false
 end
 
-desc "Deployment on Github and Gemcutter."
 namespace :deployment do 
+  desc "Deployment on Github and my own Server."
   task :github do
     sh 'git checkout master'
     sh 'git merge development'
@@ -35,6 +35,7 @@ namespace :deployment do
     sh 'git checkout development'
   end
   
+  desc "Deployment on Gemcutter."
   task :gemcutter => [:clean, :package] do
     sh 'gem19 push pkg/*.gem'
   end
@@ -57,4 +58,5 @@ Spec::Rake::SpecTask.new(:rcov) do |task|
   task.rcov_opts = IO.readlines('spec/opts/rcov.opts').each{|line| line.chomp!}
 end
 
+desc "Deployment on Github and Gemcutter."
 task :deploy => ['deployment:github', 'deployment:gemcutter']
