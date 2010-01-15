@@ -7,8 +7,16 @@ module Sinatra
       get route do
         params[:page] = 'home' if params[:page].nil?
         
-        haml params[:page].to_sym
+        begin
+          haml params[:page].to_sym
+        rescue 
+          halt 404
+        end
       end
+    end
+    
+    not_found do
+      haml :not_found
     end
   end
 end
