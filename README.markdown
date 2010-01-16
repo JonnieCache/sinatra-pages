@@ -4,7 +4,7 @@ This is a [Sinatra Extension][1] that renders any page located under the *views/
 ### Installation
 In order to install this gem, you just need to install the gem from your command line like this:
   
-  $sudo gem install sinatra-pages
+    $sudo gem install sinatra-pages
 
 You should take into account that this library have the following dependencies:
 
@@ -14,25 +14,25 @@ You should take into account that this library have the following dependencies:
 ### Usage
 Before plug in this extension, you should create the following file structure inside your application.
 
-  app/
-   |- config.ru
-   |- views/
-        |- home.haml
-        |- layout.haml
-        |- not_found.haml
+    app/
+      |- config.ru
+      |- views/
+              |- home.haml
+              |- layout.haml
+              |- not_found.haml
 
 Then, you just need to plug it in inside your *config.ru* file.
 
-  require 'sinatra'
-  require 'sinatra/pages'
+    require 'sinatra'
+    require 'sinatra/pages'
   
-  map '/' do
-    run Sinatra::Pages
-  end
+    map '/' do
+      run Sinatra::Pages
+    end
   
 Finally, you should test your application by executing the following command on your command line.
 
-  $app/rackup config.ru
+    $app/rackup config.ru
   
 In order to verify if you application is working, open your web browser with the address that will appear after the execution described above.
   
