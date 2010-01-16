@@ -16,6 +16,8 @@ module Sinatra
     end
     
     not_found do
+      params[:page] = 'not_found'
+      
       haml :not_found
     end
   end
