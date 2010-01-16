@@ -58,5 +58,13 @@ Spec::Rake::SpecTask.new(:rcov) do |task|
   task.rcov_opts = IO.readlines('spec/opts/rcov.opts').each{|line| line.chomp!}
 end
 
+desc "Install the generated Gem into your system."
+task :install => [:package] do
+  sh 'gem19 install pkg/*.gem'
+end
+
 desc "Deployment on Github and Gemcutter."
 task :deploy => ['deployment:github', 'deployment:gemcutter']
+
+desc "Default is Functional testing with RSpec."
+task :default => [:spec]
