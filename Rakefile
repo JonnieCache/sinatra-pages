@@ -37,7 +37,7 @@ namespace :deployment do
 end
 
 desc "Deployment on Github and Gemcutter."
-task :deploy => ['deployment:github', 'deployment:gemcutter']
+task :deploy => ['deployment:repositories', 'deployment:gemcutter']
 
 desc 'Functional testing with RSpec.'
 Spec::Rake::SpecTask.new :spec do |task|
