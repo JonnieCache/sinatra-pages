@@ -16,7 +16,7 @@ Rake::GemPackageTask.new GEM do |package|
 end
 
 desc "Install the generated Gem into your system."
-task :install => [:clean, :rdoc, :package] do
+task :install => [:clean, :package] do
   sh 'gem19 install pkg/*.gem'
 end
 
