@@ -12,10 +12,9 @@ describe Sinatra::Pages do
   file_of = ->(page){page.downcase.gsub ' ', '_'}
   separate = ->(text){text.chomp.split("\n")}
   create_file_for = ->(page, content=[]) do 
-    File.open("views/#{file_of.(page)}.haml", 'w') do |file| 
-      content.empty? ? file << page : 
-                       content.each{|line| file.puts line}
-    end
+    content << '= "#{params[:page]}"'
+    
+    File.open("views/#{file_of.(page)}.haml", 'w') {|file| content.each{|line| file.puts line}}
   end
     
   before :all do
@@ -33,7 +32,7 @@ describe Sinatra::Pages do
           get route
 
           last_response.should be_ok
-          last_response.body.chomp.should == 'Home'
+          last_response.body.chomp.should == file_of.('Home')
         end
       end
 
@@ -45,7 +44,7 @@ describe Sinatra::Pages do
           get "/#{file_of.(page)}"
 
           last_response.should be_ok
-          last_response.body.chomp.should == page
+          last_response.body.chomp.should == file_of.(page)
         end
       end
 
@@ -56,7 +55,7 @@ describe Sinatra::Pages do
         get "/#{file_of.('Do Not Exist')}"
 
         last_response.should be_not_found
-        last_response.body.chomp.should == 'Not Found'
+        last_response.body.chomp.should == file_of.('Not Found')
       end
     end
     
@@ -74,7 +73,7 @@ describe Sinatra::Pages do
 
           last_response.should be_ok
           separate.(last_response.body).first.should == 'Layout'
-          separate.(last_response.body).last.should == 'Home'
+          separate.(last_response.body).last.should == file_of.('Home')
         end
       end
 
@@ -87,7 +86,7 @@ describe Sinatra::Pages do
 
           last_response.should be_ok
           separate.(last_response.body).first.should == 'Layout'
-          separate.(last_response.body).last.should == page
+          separate.(last_response.body).last.should == file_of.(page)
         end
       end
 
@@ -99,7 +98,7 @@ describe Sinatra::Pages do
 
         last_response.should be_not_found
         separate.(last_response.body).first.should == 'Layout'
-        separate.(last_response.body).last.should == 'Not Found'
+        separate.(last_response.body).last.should == file_of.('Not Found')
       end
       
       after :all do
