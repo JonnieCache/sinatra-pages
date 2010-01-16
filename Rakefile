@@ -19,7 +19,7 @@ desc 'Load the GemSpec definition file.'
 load 'sinatra-pages.gemspec'
 
 desc 'Package building.'
-Rake::GemPackageTask.new(GEM) do |package|
+Rake::GemPackageTask.new GEM do |package|
   package.gem_spec = GEM
   package.need_tar = false
   package.need_zip = false
