@@ -15,11 +15,11 @@ You should take into account that this library have the following dependencies:
 Before plug in this extension, you should create the following file structure inside your application.
 
     app/
-      |- config.ru
-      |- views/
-              |- home.haml
-              |- layout.haml
-              |- not_found.haml
+     |- config.ru
+     |- views/
+          |- home.haml
+          |- layout.haml
+          |- not_found.haml
 
 Then, you just need to plug it in inside your *config.ru* file.
 
