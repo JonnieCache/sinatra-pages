@@ -1,19 +1,9 @@
 require 'rubygems' if RUBY_VERSION.to_f < 1.9
 require 'rake/clean'
-require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'spec/rake/spectask'
 
-CLEAN.include %w[coverage/ doc/ pkg/]
-
-desc 'Documentation generation.'
-Rake::RDocTask.new :rdoc do |documentation|
-  documentation.rdoc_files.add(%w(README LICENSE lib/**/*.rb))
-  documentation.main = 'README'
-  documentation.title = 'Sinatra-Pages Documentation'
-  documentation.rdoc_dir = 'doc'
-  documentation.options = %w[--line-numbers --inline-source --charset=UTF-8]
-end
+CLEAN.include %w[coverage/ pkg/]
 
 desc 'Load the GemSpec definition file.'
 load 'sinatra-pages.gemspec'
