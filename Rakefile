@@ -25,6 +25,11 @@ Rake::GemPackageTask.new(GEM) do |package|
   package.need_zip = false
 end
 
+desc "Install the generated Gem into your system."
+task :install => [:clean, :package] do
+  sh 'gem19 install pkg/*.gem'
+end
+
 namespace :deployment do 
   desc "Deployment on Github and my own Server."
   task :github do
@@ -41,6 +46,9 @@ namespace :deployment do
   end
 end
 
+desc "Deployment on Github and Gemcutter."
+task :deploy => ['deployment:github', 'deployment:gemcutter']
+
 desc 'Functional testing with RSpec.'
 Spec::Rake::SpecTask.new :spec do |task|
   task.spec_opts = %w[--options spec/opts/spec.opts]
@@ -50,21 +58,13 @@ Spec::Rake::SpecTask.new :spec do |task|
 end
 
 desc 'Functional testing with RSpec and RCov.'
-Spec::Rake::SpecTask.new(:rcov) do |task|
+Spec::Rake::SpecTask.new :rcov do |task|
   task.spec_opts = %w[--options spec/opts/spec.opts]
   task.libs = %w[lib spec]
   task.spec_files = FileList['spec/*_spec.rb']
   task.rcov = true
   task.rcov_opts = IO.readlines('spec/opts/rcov.opts').each{|line| line.chomp!}
 end
-
-desc "Install the generated Gem into your system."
-task :install => [:package] do
-  sh 'gem19 install pkg/*.gem'
-end
-
-desc "Deployment on Github and Gemcutter."
-task :deploy => ['deployment:github', 'deployment:gemcutter']
 
 desc "Default is Functional testing with RSpec."
 task :default => [:spec]
