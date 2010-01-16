@@ -17,7 +17,7 @@ end
 
 desc "Install the generated Gem into your system."
 task :install => [:clean, :package] do
-  sh 'gem19 install pkg/*.gem'
+  sh 'gem19 install pkg/*.gem --no-ri --no-rdoc'
 end
 
 namespace :deployment do 
