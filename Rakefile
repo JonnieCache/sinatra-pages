@@ -21,8 +21,8 @@ task :install => [:clean, :package] do
 end
 
 namespace :deployment do 
-  desc "Deployment on Github and my own Server."
-  task :github do
+  desc "Deployment on both Github and my own Server repository."
+  task :repositories do
     sh 'git checkout master'
     sh 'git merge development'
     sh 'git push rock-n-code master --tags'
