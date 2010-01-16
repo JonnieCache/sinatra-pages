@@ -12,7 +12,7 @@ describe Sinatra::Pages do
   file_of = ->(page){page.downcase.gsub ' ', '_'}
   separate = ->(text){text.chomp.split("\n")}
   create_file_for = ->(page, content=[]) do 
-    content << '= "#{params[:page]}"'
+    content << '= "#{params[:page]}"' if content.empty?
     
     File.open("views/#{file_of.(page)}.haml", 'w') {|file| content.each{|line| file.puts line}}
   end
