@@ -7,14 +7,18 @@ describe Sinatra::Pages do
     Sinatra::Pages
   end
 
-  PAGES = ['Home', 'Generic', 'Generic Test', 'Another Generic Test', 'Not Found']
+  PAGES = ['Home','Generic',{'Generic Test'=>'Test'},{'Another Generic Test'=>{'Generic Test'=>'Test'}},'Not Found']
 
   file_of = ->(page){page.downcase.gsub ' ', '_'}
   separate = ->(text){text.chomp.split("\n")}
-  create_file_for = ->(page, content=[]) do 
+  create_file_for = ->(page, directory = 'views', content = []) do 
+    page_to_create = page.class == String ? page : page.keys.first
     content << '= "#{params[:page]}"' if content.empty?
     
-    File.open("views/#{file_of.(page)}.haml", 'w') {|file| content.each{|line| file.puts line}}
+    Dir.mkdir directory unless File.exist? "#{directory}/"
+    File.open("#{directory}/#{file_of.(page_to_create)}.haml", 'w'){|file| content.each{|line| file.puts line}}
+    
+    create_file_for.(page.values.first, "#{directory}/#{file_of.(page.keys.first)}") if page.class == Hash
   end
     
   before :all do
@@ -61,7 +65,7 @@ describe Sinatra::Pages do
     
     context "with a Layout file" do
       before :all do
-        create_file_for.('Layout', ['Layout', '= yield'])
+        create_file_for.('Layout', 'views', ['Layout', '= yield'])
       end
       
       it "should render both the Layout and Home page if the given route is either empty or root." do
