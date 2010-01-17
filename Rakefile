@@ -3,7 +3,7 @@ require 'rake/clean'
 require 'rake/gempackagetask'
 require 'spec/rake/spectask'
 
-CLEAN.include %w[coverage/ pkg/]
+CLEAN.include %w[cov/ pkg/]
 
 desc 'Load the GemSpec definition file.'
 load 'sinatra-pages.gemspec'
