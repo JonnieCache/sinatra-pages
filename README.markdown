@@ -1,5 +1,5 @@
 # Sinatra Pages
-This is a [Sinatra Extension][1] that renders any page located under the *views/* directory inside your [Sinatra][2] application.
+This is a [Sinatra Extension][1] that renders any page or sub-pages located under the *views/* directory inside your [Sinatra][2] application.
 
 ### Installation
 In order to install this gem, you just need to install the gem from your command line like this:
@@ -18,8 +18,15 @@ Before plug in this extension, you should create the following file structure in
      |- config.ru
      |- views/
           |- home.haml
+          |- a_file.haml
+          |- another_file.haml
+          |- another_file/yet_another_file.haml
+          |- another_file/yet_another_file/still_another_file.haml
+          |- ...more file and subdirectories...
           |- layout.haml
           |- not_found.haml
+
+The only restriction is extension imposes is that you have to create the *home.haml* and the *not_found.haml* files inside your *views/* directory. Then you're free to add any page under any file structure hierarchy inside this directory.
 
 Then, you just need to plug it in inside your *config.ru* file.
 
@@ -49,7 +56,7 @@ In case you would like to contribute on this library, here's the list of extra d
 * [Julio Javier Cicchelli][7]
 
 ### Notes
-This library is being developed by using the [Ruby 1.9.1 interpreter][8] and was not being tested on any other version of the interpreter.
+This library is being developed by using the [Ruby 1.9.1 interpreter][8] and was not being tested on any other version of the interpreter nor any other implementation.
 
 ### License
 This extension is licensed under the [MIT License][9].
