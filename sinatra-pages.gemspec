@@ -19,7 +19,5 @@ GEM = Gem::Specification.new do |specification|
   specification.add_development_dependency 'rake-test', '>= 0.5.3'
   specification.files = %w[LICENSE README.markdown Rakefile] + Dir.glob('{lib,spec}/**/*')
   specification.test_files = Dir.glob('spec/*.rb')
-  specification.has_rdoc = true
-  specification.extra_rdoc_files = %w(README.markdown LICENSE)
-  specification.rdoc_options = %w[--title Sinatra-Pages --main README.markdown --line-numbers --inline-source --charset=UTF-8]
+  specification.has_rdoc = false
 end
