@@ -40,15 +40,19 @@ describe Sinatra::Pages do
         end
       end
 
-      it "should render just an existing page if the given route match the '/:page' pattern." do
-        PAGES.each do |page|
+      it "should render just an existing page if the given route match the '/:page' or '/*/:page' patterns." do
+        Dir.glob 'views/**/*.haml' do |file|
+          directory = ''
+          
           File.exist?("views/#{file_of.('Layout')}.haml").should be_false
-          File.exist?("views/#{file_of.(page)}.haml").should be_true
+          File.exist?(file).should be_true
+          
+          directory << File.dirname(file)[5, File.dirname(file).size] unless File.dirname(file)[5].nil?
 
-          get "/#{file_of.(page)}"
+          get "#{directory}/#{File.basename(file, '.haml')}"
 
           last_response.should be_ok
-          last_response.body.chomp.should == file_of.(page)
+          last_response.body.chomp.should == File.basename(file, '.haml')
         end
       end
 
@@ -81,16 +85,18 @@ describe Sinatra::Pages do
         end
       end
 
-      it "should render both the Layout and an existing page if the given route match the '/:page' pattern." do
-        PAGES.each do |page|
+      it "should render both the Layout and an existing page if the given route match the '/:page' or '/*/:page' patterns." do
+        Dir.glob('views/**/*.haml').reject{|file| file =~ /layout/}.each do |file|
           File.exist?("views/#{file_of.('Layout')}.haml").should be_true
-          File.exist?("views/#{file_of.(page)}.haml").should be_true
-
-          get "/#{file_of.(page)}"
+          File.exist?(file).should be_true
+          
+          directory = File.dirname(file)[5].nil? ? '' : File.dirname(file)[5, File.dirname(file).size]
+          
+          get "#{directory}/#{File.basename(file, '.haml')}"
 
           last_response.should be_ok
           separate.(last_response.body).first.should == 'Layout'
-          separate.(last_response.body).last.should == file_of.(page)
+          separate.(last_response.body).last.should == File.basename(file, '.haml')
         end
       end
 
