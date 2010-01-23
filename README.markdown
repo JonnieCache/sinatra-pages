@@ -1,5 +1,5 @@
 # Sinatra Pages
-This is a [Sinatra Extension][1] that renders any page or sub-pages located under the directory defined as *:views* and the layout file defined as *:layout* (if there is any) inside your [Sinatra][2] application.
+This is a [Sinatra Extension][1] that renders for browser and AJAX calls any page or sub-pages located under the directory defined as *:views* and the layout file defined as *:layout* (if there is any) inside your [Sinatra][2] application.
 
 ### Installation
 In order to install this gem, you just need to install the gem from your command line like this:
