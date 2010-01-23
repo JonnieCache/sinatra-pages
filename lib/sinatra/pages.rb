@@ -11,7 +11,7 @@ module Sinatra
         page_to_render << params[:page]
         
         begin
-          haml page_to_render.to_sym
+          haml page_to_render.to_sym, :layout => !request.xhr?
         rescue Errno::ENOENT
           halt 404
         end
@@ -21,7 +21,7 @@ module Sinatra
     not_found do
       params[:page] = 'not_found'
       
-      haml :not_found
+      haml :not_found, :layout => !request.xhr?
     end
   end
 end
