@@ -4,7 +4,7 @@ describe Sinatra::Pages do
   include Rack::Test::Methods
   
   def app
-    Sinatra::Pages
+    Sinatra::Application
   end
 
   PAGES = ['Home','Generic',{'Generic Test'=>'Test'},{'Another Generic Test'=>{'Generic Test'=>'Test'}},'Not Found']
@@ -15,14 +15,13 @@ describe Sinatra::Pages do
     page_to_create = page.class == String ? page : page.keys.first
     content << '= "#{params[:page]}"' if content.empty?
     
-    Dir.mkdir directory unless File.exist? "#{directory}/"
+    Dir.mkdir "#{directory}/" unless File.exist? "#{directory}/"
     File.open("#{directory}/#{file_of.(page_to_create)}.haml", 'w'){|file| content.each{|line| file.puts line}}
     
     create_file_for.(page.values.first, "#{directory}/#{file_of.(page.keys.first)}") if page.class == Hash
   end
     
   before :all do
-    FileUtils.mkdir 'views'
     PAGES.each{|page| create_file_for.(page)}
   end
   
