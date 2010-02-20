@@ -12,9 +12,10 @@ You should take into account that this library have the following dependencies:
 * [haml][3]
 
 ### Usage
-Before plug in this extension, you should create the following file structure inside your application.
+Before using this extension, you should create the following file structure inside your application.
 
     app/
+     |- app.rb
      |- config.ru
      |- views/
           |- home.haml
@@ -26,18 +27,47 @@ Before plug in this extension, you should create the following file structure in
           |- layout.haml
           |- not_found.haml
 
-The only restriction is extension imposes is that you have to create the *home.haml* and the *not_found.haml* files inside the directory you defined as *:views* for the pluggable application (Sinatra uses the *views/* directory as the default path for the *:views* option). Then you're free to add any layout (Sinatra defined the *layout.haml* file as the default specification for the *:layout* option) and page under any file structure hierarchy inside this directory.
+Please notice that this extension requires you to create the *home.haml* and the *not_found.haml* files inside the directory you defined as *:views* on your application (Sinatra uses the *views/* directory as the default path for the *:views* directory). Then you're free to add any layout (Sinatra defined the *layout.haml* file as the default specification for the *:layout* template) and page under any file structure hierarchy inside this directory.
 
-Then, you just need to plug it in inside your *config.ru* file.
+Now, as any other existing extension, there are two possible use cases depending the kind of Sinatra application you're developing. If you follow the __Classic__ approach, then you just need to require this extension in the *app.rb* file.
 
     require 'sinatra'
     require 'sinatra/pages'
-  
-    map '/' do
-      run Sinatra::Pages
+    
+Then you should require your *app.rb* file inside the *config.ru* file in order to make your application runnable.
+
+    require 'app'
+    
+    disable :run
+    
+    run Sinatra::Application
+
+You can test your application by executing the following command on your command line.
+
+    $app/ruby app.rb
+    
+In case you would prefer to follow the __Modular__ approach on your application design, then you just need to declare your application as a class that inherit from the *Sinatra::Base* class and then register the extension inside it in the *app.rb* file.
+
+    require 'sinatra/base'
+    require 'sinatra/pages'
+    
+    module Sinatra
+      module App < Sinatra::Base
+        register Sinatra::Pages
+      end
     end
-  
-Finally, you should test your application by executing the following command on your command line.
+
+Then you should require your *app.rb* inside the *config.ru* file and associate your application class to a certain route.
+
+    require 'app'
+    
+    disable :run
+    
+    map '/' do
+      run Sinatra::App
+    end
+
+You can try your modular application by executing the following command in your command line.
 
     $app/rackup config.ru
   
