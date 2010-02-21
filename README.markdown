@@ -86,7 +86,7 @@ In case you would like to contribute on this library, here's the list of extra d
 * [Julio Javier Cicchelli][7]
 
 ### Notes
-This library is being developed by using the [Ruby 1.9.1 interpreter][8] and was not being tested on any other version of the interpreter nor any other implementation.
+This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][8].
 
 ### License
 This extension is licensed under the [MIT License][9].
