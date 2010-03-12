@@ -51,17 +51,13 @@ In case you would prefer to follow the __Modular__ approach on your application 
     require 'sinatra/base'
     require 'sinatra/pages'
     
-    module Sinatra
-      module App < Sinatra::Base
-        register Sinatra::Pages
-      end
+    class App < Sinatra::Base
+      register Sinatra::Pages
     end
 
 Then you should require your *app.rb* inside the *config.ru* file and associate your application class to a certain route.
 
     require 'app'
-    
-    disable :run
     
     map '/' do
       run Sinatra::App
