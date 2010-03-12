@@ -18,7 +18,7 @@ module Sinatra
           end
         end
       end
-
+      
       app.not_found do
         params[:page] = 'not_found'
 
