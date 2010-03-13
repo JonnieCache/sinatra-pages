@@ -34,7 +34,7 @@ namespace :deployment do
   
   desc "Deployment on Gemcutter."
   task :gemcutter => [:clean, :package] do
-    sh "#{GEM_COMMAND} push pkg/*.gem"
+    sh "gem push pkg/*.gem"
   end
 end
 
