@@ -1,5 +1,5 @@
 # Sinatra Pages
-This is a [Sinatra Extension][1] that renders for browser and AJAX calls any page or sub-pages located under the directory defined as *:views* and the layout file defined as *:layout* (if there is any) inside your [Sinatra][2] application.
+This is a [Sinatra Extension][1] that renders any page or sub-pages located under the directory defined as *:views* and the layout file defined as *:layout* (if there is any) inside your [Sinatra][2] application.
 
 ### Installation
 In order to install this gem, you just need to install the gem from your command line like this:
@@ -81,6 +81,14 @@ In case you would like to contribute on this library, here's the list of extra d
 ### Contributors
 * [Julio Javier Cicchelli][7]
 
+### Sites
+The following sites are proudly using this extension:
+
+* [Rock & Code][10]
+* [Izcheznali][11]
+
+If your site is also using this extension, please let us know!
+
 ### Notes
 This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][8].
 
@@ -96,3 +104,5 @@ This extension is licensed under the [MIT License][9].
 [7]: http://github.com/mr-rock
 [8]: http://www.ruby-lang.org/en/
 [9]: http://creativecommons.org/licenses/MIT/
+[10]: http://rock-n-code.com
+[11]: http://izcheznali.net
