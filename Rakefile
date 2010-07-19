@@ -3,8 +3,6 @@ require 'rake/clean'
 require 'rake/gempackagetask'
 require 'spec/rake/spectask'
 
-GEM_COMMAND = RUBY_VERSION.to_f < 1.9 ? 'gem' : 'gem19'
-
 CLEAN.include %w[cov/ pkg/]
 
 desc 'Load the GemSpec definition file.'
@@ -19,7 +17,7 @@ end
 
 desc "Install the generated Gem into your system."
 task :install => [:clean, :package] do
-  sh "sudo #{GEM_COMMAND} install pkg/*.gem --no-ri --no-rdoc"
+  sh "gem install pkg/*.gem --no-ri --no-rdoc"
 end
 
 namespace :deployment do 
