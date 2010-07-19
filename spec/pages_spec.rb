@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Sinatra::Pages do
   include Rack::Test::Methods
+  include HelperMethods
   
   def app
     Sinatra::Application
