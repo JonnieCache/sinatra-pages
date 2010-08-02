@@ -8,29 +8,27 @@ describe Sinatra::Pages do
     TestApp
   end
 
-  PAGES = ['Home','Generic',{'Generic Test'=>'Test'},{'Another Generic Test'=>{'Generic Test'=>'Test'}},'Not Found']
-
   before :all do
     PAGES.each{|page| create_file_for(page)}
   end
   
-  context "uses HTTP GET request method" do
+  context "on HTTP GET" do
     context "in synchronous mode" do
       context "with no Layout file" do
-        it "should render just the Home page if the given route is either empty or root." do
+        it "should render only the Home page if the given route is either empty or root." do
           File.exist?("views/#{file_of('Layout')}.haml").should be_false
           File.exist?("views/#{file_of('Home')}.haml").should be_true
 
           ['/', ''].each do |route|
             get route
-
+            
             last_request.should_not be_xhr
             last_response.should be_ok
             last_response.body.chomp.should == file_of('Home')
           end
         end
         
-        it "should render just an existing page if the given route match the '/:page' or '/*/:page' patterns." do
+        it "should render only an existing page if the given route match the '/:page' or '/*/:page' patterns." do
           Dir.glob 'views/**/*.haml' do |file|
             File.exist?("views/#{file_of('Layout')}.haml").should be_false
             File.exist?(file).should be_true
@@ -45,7 +43,7 @@ describe Sinatra::Pages do
           end
         end
         
-        it "should render just the Not Found page if a given route can't find its static page on 'views/'." do
+        it "should render only the Not Found page if a given route can't find its static page on 'views/'." do
           File.exist?("views/#{file_of('Layout')}.haml").should be_false
           File.exist?("views/#{file_of('Do Not Exist')}.haml").should be_false
 
