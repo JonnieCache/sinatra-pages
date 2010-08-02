@@ -41,7 +41,7 @@ task :deploy => ['deployment:repositories', 'deployment:gemcutter']
 
 desc 'Functional testing with RSpec.'
 Spec::Rake::SpecTask.new :spec do |task|
-  task.spec_opts = %w[--colour --format profile --loadby mtime --reverse --timeout 20 --diff]
+  task.spec_opts = %w[--colour --format progress --loadby mtime --timeout 20 --diff --backtrace]
   task.libs = %w[lib spec]
   task.spec_files = FileList['spec/**/*.rb']
   task.rcov = false
@@ -49,7 +49,7 @@ end
 
 desc 'Functional testing with RSpec and RCov.'
 Spec::Rake::SpecTask.new :rcov do |task|
-  task.spec_opts = %w[--colour --format profile --loadby mtime --reverse --timeout 20 --diff]
+  task.spec_opts = %w[--colour --format progress --loadby mtime --timeout 20 --diff --backtrace]
   task.libs = %w[lib spec]
   task.spec_files = FileList['spec/*_spec.rb']
   task.rcov = true
