@@ -5,7 +5,7 @@ describe Sinatra::Pages do
   include HelperMethods
   
   def app
-    Sinatra::Application
+    TestApp
   end
 
   PAGES = ['Home','Generic',{'Generic Test'=>'Test'},{'Another Generic Test'=>{'Generic Test'=>'Test'}},'Not Found']
