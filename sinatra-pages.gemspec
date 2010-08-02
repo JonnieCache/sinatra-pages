@@ -3,7 +3,7 @@ GEM = Gem::Specification.new do |specification|
   specification.required_rubygems_version = '>= 1.3.5'
   specification.rubygems_version = '1.3.5'
   specification.name = 'sinatra-pages'
-  specification.version = '1.1.3'
+  specification.version = '1.1.4'
   specification.date = Time.now.strftime '%Y-%m-%d'
   specification.authors = ['Julio Javier Cicchelli']
   specification.email = 'javier@rock-n-code.com'
