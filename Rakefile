@@ -25,7 +25,7 @@ namespace :deployment do
   task :repositories do
     sh 'git checkout master'
     sh 'git merge development'
-    sh 'git push rock-n-code master --tags'
+    sh 'git push github master --tags'
     sh 'git push server master --tags'
     sh 'git checkout development'
   end
