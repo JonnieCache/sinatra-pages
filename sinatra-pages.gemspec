@@ -1,7 +1,7 @@
 GEM = Gem::Specification.new do |specification|
   specification.required_ruby_version = '>= 1.8.6'
   specification.required_rubygems_version = '>= 1.3.5'
-  specification.rubygems_version = '1.3.5'
+  specification.rubygems_version = '1.3.7'
   specification.name = 'sinatra-pages'
   specification.version = '1.2.0'
   specification.date = Time.now.strftime '%Y-%m-%d'
