@@ -4,7 +4,10 @@ require 'haml'
 module Sinatra
   module Pages
     def self.registered(app)
-      %w[/? /:page /*/:page].each do |route|
+      app.set :root, Dir.pwd
+      app.enable :static
+      
+      %w[/? /:page/? /*/:page/?].each do |route|
         app.get route do
           params[:page] = 'home' if params[:page].nil?
 
