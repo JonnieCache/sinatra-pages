@@ -10,7 +10,7 @@ GEM = Gem::Specification.new do |specification|
   specification.homepage = 'http://github.com/rock-n-code/sinatra-pages'
   specification.summary = 'A Sinatra extension for static pages rendering.'
   specification.description = <<-DESCRIPTION
-    A Sinatra extension for static pages rendering.
+    A Sinatra extension for static pages rendering using the HAML rendering engine.
   DESCRIPTION
   specification.add_runtime_dependency 'sinatra', '>= 1.0.0'
   specification.add_runtime_dependency 'haml', '>= 3.0.15'
