@@ -8,10 +8,6 @@ describe Sinatra::Pages do
     TestApp
   end
 
-  before :all do
-    PAGES.each{|page| create_file_for(page)}
-  end
-  
   context 'built-in settings' do
     context 'by default' do
       subject {app}
@@ -50,196 +46,260 @@ describe Sinatra::Pages do
     end
   end
   
-  context "on HTTP GET" do
-    context "in synchronous mode" do
-      context "with no Layout file" do
-        it "should render only the Home page if the given route is either empty or root." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_false
-          File.exist?("views/#{file_of('Home')}.haml").should be_true
+  context 'on HTTP GET' do
+    before :all do
+      PAGES.each{|page| create_file_for(page, app.views)}
+    end
+    
+    context 'in synchronous mode' do
+      context 'with no Layout' do
+        subject {File.join app.views, "#{file_of('Layout')}.haml"}
+        it {File.exist?(subject).should == false}
+        
+        context 'and with Home static page' do
+          subject {File.join app.views, "#{file_of('Home')}.haml"}
+          it {File.exist?(subject).should == true}
+          it 'should render it.' do
+            ['/', ''].each do |route|
+              get route
 
-          ['/', ''].each do |route|
-            get route
+              last_request.should_not be_xhr
+              last_response.should be_ok
+              last_response.body.chomp.should == file_of('Home')
+            end
+          end
+        end
+        
+        Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
+          filename = File.basename(file, '.haml').capitalize
+          
+          context "and with #{filename} static page" do
+            subject {file}
+            it {File.exist?(subject).should == true}
+            it "should render it." do
+              directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
+              path = "#{directory}/#{File.basename(subject, '.haml')}"
+              
+              [path, "#{path}/"].each do |route|
+                get route
+
+                last_request.should_not be_xhr
+                last_response.should be_ok
+                last_response.body.chomp.should == File.basename(subject, '.haml')
+              end
+            end
+          end
+        end
+        
+        context 'and with a non-existing static page' do
+          subject {File.join app.views, "#{file_of('Do Not Exist')}.haml"}
+          it {File.exist?(subject).should == false}
+          it 'should render the Not Found page.' do
+            path = "/#{file_of('Do Not Exist')}"
             
-            last_request.should_not be_xhr
-            last_response.should be_ok
-            last_response.body.chomp.should == file_of('Home')
+            [path, "#{path}/"].each do |route|
+              get route
+
+              last_request.should_not be_xhr
+              last_response.should be_not_found
+              last_response.body.chomp.should == file_of('Not Found')
+            end
           end
-        end
-        
-        it "should render only an existing page if the given route match the '/:page' or '/*/:page' patterns." do
-          Dir.glob 'views/**/*.haml' do |file|
-            File.exist?("views/#{file_of('Layout')}.haml").should be_false
-            File.exist?(file).should be_true
-
-            directory = File.dirname(file)[5].nil? ? '' : File.dirname(file)[5, File.dirname(file).size]
-
-            get "#{directory}/#{File.basename(file, '.haml')}"
-
-            last_request.should_not be_xhr
-            last_response.should be_ok
-            last_response.body.chomp.should == File.basename(file, '.haml')
-          end
-        end
-        
-        it "should render only the Not Found page if a given route can't find its static page on 'views/'." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_false
-          File.exist?("views/#{file_of('Do Not Exist')}.haml").should be_false
-
-          get "/#{file_of('Do Not Exist')}"
-
-          last_request.should_not be_xhr
-          last_response.should be_not_found
-          last_response.body.chomp.should == file_of('Not Found')
         end
       end
       
-      context "with Layout file" do
+      context "with Layout" do
         before :all do
-          create_file_for('Layout', 'views', ['Layout', '= yield'])
+          create_file_for('Layout', app.views, ['Layout', '= yield'])
         end
+        
+        subject {File.join app.views, "#{file_of('Layout')}.haml"}
+        it {File.exist?(subject).should == true}
+        
+        context 'and with Home static page' do
+          subject {File.join app.views, "#{file_of('Home')}.haml"}
+          it {File.exist?(subject).should == true}
+          it 'should render both.' do
+            ['/', ''].each do |route|
+              get route
 
-        it "should render both the Layout and Home page if the given route is either empty or root." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_true
-          File.exist?("views/#{file_of('Home')}.haml").should be_true
+              last_request.should_not be_xhr
+              last_response.should be_ok
+              separate(last_response.body).first.should == 'Layout'
+              separate(last_response.body).last.should == file_of('Home')
+            end
+          end
+        end
+        
+        Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
+          filename = File.basename(file, '.haml').capitalize
+          
+          context "and with #{filename} static page" do
+            subject {file}
+            it {File.exist?(subject).should == true}
+            it "should render both." do
+              directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
+              path = "#{directory}/#{File.basename(subject, '.haml')}"
+              
+              [path, "#{path}/"].each do |route|
+                get route
 
-          ['/', ''].each do |route|
-            get route
-
-            last_request.should_not be_xhr
-            last_response.should be_ok
-            separate(last_response.body).first.should == 'Layout'
-            separate(last_response.body).last.should == file_of('Home')
+                last_request.should_not be_xhr
+                last_response.should be_ok
+                separate(last_response.body).first.should == 'Layout'
+                separate(last_response.body).last.should == File.basename(file, '.haml')
+              end
+            end
           end
         end
 
-        it "should render both the Layout and an existing page if the given route match the '/:page' or '/*/:page' patterns." do
-          Dir.glob('views/**/*.haml').reject{|file| file =~ /layout/}.each do |file|
-            File.exist?("views/#{file_of('Layout')}.haml").should be_true
-            File.exist?(file).should be_true
+        context 'and with a non-existing static page' do
+          subject {File.join app.views, "#{file_of('Do Not Exist')}.haml"}
+          it {File.exist?(subject).should == false}
+          it 'should render the Layout and the Not Found page.' do
+            path = "/#{file_of('Do Not Exist')}"
+            
+            [path, "#{path}/"].each do |route|
+              get route
 
-            directory = File.dirname(file)[5].nil? ? '' : File.dirname(file)[5, File.dirname(file).size]
-
-            get "#{directory}/#{File.basename(file, '.haml')}"
-
-            last_request.should_not be_xhr
-            last_response.should be_ok
-            separate(last_response.body).first.should == 'Layout'
-            separate(last_response.body).last.should == File.basename(file, '.haml')
+              last_request.should_not be_xhr
+              last_response.should be_not_found
+              separate(last_response.body).first.should == 'Layout'
+              separate(last_response.body).last.should == file_of('Not Found')
+            end
           end
-        end
-
-        it "should render both the Layout and the Not Found page if a given route can't find its static page on 'views/'." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_true
-          File.exist?("views/#{file_of('Do Not Exist')}.haml").should be_false
-
-          get "/#{file_of('Do Not Exist')}"
-
-          last_request.should_not be_xhr
-          last_response.should be_not_found
-          separate(last_response.body).first.should == 'Layout'
-          separate(last_response.body).last.should == file_of('Not Found')
         end
 
         after :all do
-          FileUtils.rm 'views/layout.haml'
+          FileUtils.rm "#{app.views}/layout.haml"
         end
       end
     end
     
     context "in asynchronous mode" do
-      context "with no Layout file" do
-        it "should render just the Home page if the given route is either empty or root." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_false
-          File.exist?("views/#{file_of('Home')}.haml").should be_true
+      context 'with no Layout' do
+        subject {File.join app.views, "#{file_of('Layout')}.haml"}
+        it {File.exist?(subject).should == false}
+        
+        context 'and with Home static page' do
+          subject {File.join app.views, "#{file_of('Home')}.haml"}
+          it {File.exist?(subject).should == true}
+          it 'should render it.' do
+            ['/', ''].each do |route|
+              request route, :method => 'GET', :xhr => true
 
-          ['/', ''].each do |route|
-            request route, :method => 'GET', :xhr => true
-
-            last_request.should be_xhr
-            last_response.should be_ok
-            last_response.body.chomp.should == file_of('Home')
+              last_request.should be_xhr
+              last_response.should be_ok
+              last_response.body.chomp.should == file_of('Home')
+            end
           end
         end
         
-        it "should render just an existing page if the given route match the '/:page' or '/*/:page' patterns." do
-          Dir.glob 'views/**/*.haml' do |file|
-            File.exist?("views/#{file_of('Layout')}.haml").should be_false
-            File.exist?(file).should be_true
+        Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
+          filename = File.basename(file, '.haml').capitalize
+          
+          context "and with #{filename} static page" do
+            subject {file}
+            it {File.exist?(subject).should == true}
+            it "should render it." do
+              directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
+              path = "#{directory}/#{File.basename(subject, '.haml')}"
+              
+              [path, "#{path}/"].each do |route|
+                request route, :method => 'GET', :xhr => true
 
-            directory = File.dirname(file)[5].nil? ? '' : File.dirname(file)[5, File.dirname(file).size]
-
-            request "#{directory}/#{File.basename(file, '.haml')}", :method => 'GET', :xhr => true
-
-            last_request.should be_xhr
-            last_response.should be_ok
-            last_response.body.chomp.should == File.basename(file, '.haml')
+                last_request.should be_xhr
+                last_response.should be_ok
+                last_response.body.chomp.should == File.basename(subject, '.haml')
+              end
+            end
           end
         end
         
-        it "should render just the Not Found page if a given route can't find its static page on 'views/." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_false
-          File.exist?("views/#{file_of('Do Not Exist')}.haml").should be_false
+        context 'and with a non-existing static page' do
+          subject {File.join app.views, "#{file_of('Do Not Exist')}.haml"}
+          it {File.exist?(subject).should == false}
+          it 'should render the Not Found page.' do
+            path = "/#{file_of('Do Not Exist')}"
+            
+            [path, "#{path}/"].each do |route|
+              request route, :method => 'GET', :xhr => true
 
-          request "/#{file_of('Do Not Exist')}", :method => 'GET', :xhr => true
-
-          last_request.should be_xhr
-          last_response.should be_not_found
-          last_response.body.chomp.should == file_of('Not Found')
+              last_request.should be_xhr
+              last_response.should be_not_found
+              last_response.body.chomp.should == file_of('Not Found')
+            end
+          end
         end
       end
       
-      context "with a Layout file" do
+      context 'with a Layout' do
         before :all do
-          create_file_for('Layout', 'views', ['Layout', '= yield'])
+          create_file_for('Layout', app.views, ['Layout', '= yield'])
         end
+        
+        subject {File.join app.views, "#{file_of('Layout')}.haml"}
+        it {File.exist?(subject).should == true}
+        
+        context 'and with Home static page' do
+          subject {File.join app.views, "#{file_of('Home')}.haml"}
+          it {File.exist?(subject).should == true}
+          it 'should render it.' do
+            ['/', ''].each do |route|
+              request route, :method => 'GET', :xhr => true
 
-        it "should render both the Layout and Home page if the given route is either empty or root." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_true
-          File.exist?("views/#{file_of('Home')}.haml").should be_true
+              last_request.should be_xhr
+              last_response.should be_ok
+              last_response.body.chomp.should == file_of('Home')
+            end
+          end
+        end
+        
+        Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
+          filename = File.basename(file, '.haml').capitalize
+          
+          context "and with #{filename} static page" do
+            subject {file}
+            it {File.exist?(subject).should == true}
+            it "should render both." do
+              directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
+              path = "#{directory}/#{File.basename(subject, '.haml')}"
+              
+              [path, "#{path}/"].each do |route|
+                request route, :method => 'GET', :xhr => true
 
-          ['/', ''].each do |route|
-            request route, :method => 'GET', :xhr => true
-
-            last_request.should be_xhr
-            last_response.should be_ok
-            last_response.body.chomp.should == file_of('Home')
+                last_request.should be_xhr
+                last_response.should be_ok
+                last_response.body.chomp.should == File.basename(file, '.haml')
+              end
+            end
           end
         end
 
-        it "should render both the Layout and an existing page if the given route match the '/:page' or '/*/:page' patterns." do
-          Dir.glob('views/**/*.haml').reject{|file| file =~ /layout/}.each do |file|
-            File.exist?("views/#{file_of('Layout')}.haml").should be_true
-            File.exist?(file).should be_true
+        context 'and with a non-existing static page' do
+          subject {File.join app.views, "#{file_of('Do Not Exist')}.haml"}
+          it {File.exist?(subject).should == false}
+          it 'should render the Layout and the Not Found page.' do
+            path = "/#{file_of('Do Not Exist')}"
+            
+            [path, "#{path}/"].each do |route|
+              request route, :method => 'GET', :xhr => true
 
-            directory = File.dirname(file)[5].nil? ? '' : File.dirname(file)[5, File.dirname(file).size]
-
-            request "#{directory}/#{File.basename(file, '.haml')}", :method => 'GET', :xhr => true
-
-            last_request.should be_xhr
-            last_response.should be_ok
-            last_response.body.chomp.should == File.basename(file, '.haml')
+              last_request.should be_xhr
+              last_response.should be_not_found
+              last_response.body.chomp.should == file_of('Not Found')
+            end
           end
-        end
-
-        it "should render both the Layout and the Not Found page if a given route can't find its static page on 'views/'." do
-          File.exist?("views/#{file_of('Layout')}.haml").should be_true
-          File.exist?("views/#{file_of('Do Not Exist')}.haml").should be_false
-
-          request "/#{file_of('Do Not Exist')}", :method => 'GET', :xhr => true
-
-          last_request.should be_xhr
-          last_response.should be_not_found
-          last_response.body.chomp.should == file_of('Not Found')
         end
 
         after :all do
-          FileUtils.rm 'views/layout.haml'
+          FileUtils.rm "#{app.views}/layout.haml"
         end
       end
     end
-  end
-
-  after :all do
-    FileUtils.rm_r 'views', :force => true
+    
+    after :all do
+      FileUtils.rm_r app.views, :force => true
+    end
   end
 end
