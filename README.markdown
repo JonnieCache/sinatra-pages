@@ -1,5 +1,5 @@
 # Sinatra Pages
-This is a [Sinatra Extension][1] that renders any page or sub-pages located under the directory defined as *:views* and the layout file defined as *:layout* (if there is any) inside your [Sinatra][2] application.
+This is a [Sinatra][1] extension that renders any static page (including sub-pages) located under your *views/* directory  using [HAML][2] as the rendering engine. By combining the main driving principles behind these two libraries, this extension allows you to build static websites for [Sinatra][2] or directly on [Rack][3] in no time.
 
 ### Installation
 In order to install this gem, you just need to install the gem from your command line like this:
@@ -8,8 +8,8 @@ In order to install this gem, you just need to install the gem from your command
 
 You should take into account that this library have the following dependencies:
 
-* [sinatra][2]
-* [haml][3]
+* [sinatra][1]
+* [haml][2]
 
 ### Usage
 Before using this extension, you should create the following file structure inside your application.
@@ -17,17 +17,28 @@ Before using this extension, you should create the following file structure insi
     app/
      |- app.rb
      |- config.ru
+     |- public/
+          |- images/
+              |- ...
+          |- scripts/
+              |- ...
+          |- styles/
+              |- ...
      |- views/
           |- home.haml
-          |- a_file.haml
-          |- another_file.haml
-          |- another_file/yet_another_file.haml
-          |- another_file/yet_another_file/still_another_file.haml
-          |- ...more files and subdirectories...
           |- layout.haml
           |- not_found.haml
+          |- a_file.haml
+          |- another_file.haml
+          |- ...
+          |- another_file/
+                  |- yet_another_file.haml
+                  |- ...
+                  |- yet_another_file/
+                            |- still_another_file.haml
+                            |- ...
 
-Please notice that this extension requires you to create the *home.haml* and the *not_found.haml* files inside the directory you defined as *:views* on your application (Sinatra uses the *views/* directory as the default path for the *:views* directory). Then you're free to add any layout (Sinatra defined the *layout.haml* file as the default specification for the *:layout* template) and page under any file structure hierarchy inside this directory.
+Please notice that this extension requires you to create the *home.haml* and the *not_found.haml* files inside your *views/* directory on your application. Then you're free to add a *layout.haml* (if required) and all the static pages you need under any file structure hierarchy inside this directory. Please don't forget to give the extension *.haml* to all your views.
 
 Now, as any other existing extension, there are two possible use cases depending the kind of Sinatra application you're developing. If you follow the __Classic__ approach, then you just need to require this extension in the *app.rb* file.
 
@@ -68,7 +79,43 @@ You can try your modular application by executing the following command in your 
     $app/rackup config.ru
   
 In order to verify if you application is working, open your web browser with the address that will appear after the execution described above.
-  
+
+### Customization
+This extension assumes the __:views__ and __:public__ configuration are located on the *./views* and *./public* directories respectively. In any case, you are able to change these values as required.
+
+Depending on the kind of Sinatra application you're developing, you should proceed as follows. If you follow the __Classic__ approach, then you just need to set these configuration parameters in the *app.rb* file.
+
+    require 'sinatra'
+    require 'sinatra/pages'
+    
+    set :views, File.join(Dir.pwd, 'templates')
+    set :public, Proc.new {File.join(root, 'static')}
+    
+In case you would prefer to follow the __Modular__ approach on your application design, then you can set these variables  within your application as a class that inherit from the *Sinatra::Base* class in the *app.rb* file.
+
+    require 'sinatra/base'
+    require 'sinatra/pages'
+    
+    class App < Sinatra::Base
+      register Sinatra::Pages
+      
+      set :views, File.join(Dir.pwd, 'templates')
+      set :public, Proc.new {File.join(root, 'static')}
+    end
+
+Alternatively, you can also set these variables directly from the *config.ru* file in which your application class will be associated to a certain route.
+
+    require 'app'
+    
+    map '/' do
+      Sinatra::App.set :views, File.join(Dir.pwd, 'templates')
+      Sinatra::App.set :public, Proc.new {File.join(root, 'static')}
+      
+      run Sinatra::App
+    end
+
+In order to verify if the customized setup is working as expected, open your web browser with the address that will appear after the execution described above.
+
 ### Contributions
 Everybody is welcome to contribute to this project by commenting the source code, suggesting modifications or new ideas, reporting bugs, writing some documentation and, of course, you're also welcome to contribute with patches as well!
 
@@ -95,9 +142,9 @@ This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [R
 ### License
 This extension is licensed under the [MIT License][9].
 
-[1]: http://www.sinatrarb.com/extensions.html
-[2]: http://www.sinatrarb.com/
-[3]: http://haml-lang.com/
+[1]: http://www.sinatrarb.com/
+[2]: http://haml-lang.com/
+[3]: http://rack.rubyforge.org/
 [4]: http://rspec.info/
 [5]: http://eigenclass.org/hiki/rcov
 [6]: http://gitrdoc.com/brynary/rack-test/tree/master
