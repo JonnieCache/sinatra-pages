@@ -12,6 +12,44 @@ describe Sinatra::Pages do
     PAGES.each{|page| create_file_for(page)}
   end
   
+  context 'built-in settings' do
+    context 'by default' do
+      subject {app}
+      its(:root) {should == Dir.pwd}
+      its(:public) {should == File.join(Dir.pwd, 'public')}
+      its(:views) {should == File.join(Dir.pwd, 'views')}
+      its(:static) {should == true} 
+    end
+
+    context 'on defining' do
+      before {app.set :root, Dir.pwd}
+      
+      context '#root' do
+        subject {app.set :root, File.dirname(__FILE__)}
+        its(:root) {should == File.dirname(__FILE__)}
+        its(:public) {should == File.join(File.dirname(__FILE__), 'public')}
+        its(:views) {should == File.join(File.dirname(__FILE__), 'views')}
+        its(:static) {should == true}
+      end
+
+      context '#public' do
+        subject {app.set :public, File.join(File.dirname(__FILE__), 'public')}
+        its(:root) {should == Dir.pwd}
+        its(:public) {should == File.join(File.dirname(__FILE__), 'public')}
+        its(:views) {should == File.join(Dir.pwd, 'views')}
+        its(:static) {should == true}
+      end
+
+      context '#views' do
+        subject {app.set :views, File.join(File.dirname(__FILE__), 'views')}
+        its(:root) {should == Dir.pwd}
+        its(:public) {should == File.join(Dir.pwd, 'public')}
+        its(:views) {should == File.join(File.dirname(__FILE__), 'views')}
+        its(:static) {should == true}
+      end
+    end
+  end
+  
   context "on HTTP GET" do
     context "in synchronous mode" do
       context "with no Layout file" do
