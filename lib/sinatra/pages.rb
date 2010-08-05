@@ -34,6 +34,22 @@ module Sinatra
         haml :not_found, :layout => !request.xhr?
       end
     end
+
+    private
+    
+    def setup(app)
+      options = {:format => nil, :ugly => nil, :escape_html => nil}
+
+      options[:ugly] = app.format == :ugly ? true : false
+      options[:escape_html] = app.escaping
+      options[:format] = case app.html
+        when :v5 then :html5
+        when :v4 then :html4
+        when :vX then :xhtml
+      end
+      
+      options
+    end
   end
   
   register Pages
