@@ -4,6 +4,9 @@ require 'haml'
 module Sinatra
   module Pages
     def self.registered(app)
+      app.set :html, :v5
+      app.set :format, :tidy
+      app.disable :escaping
       
       app.configure do
         app.set :root, Dir.pwd
