@@ -10,6 +10,7 @@ module Sinatra
       
       app.configure do
         app.set :root, Dir.pwd
+        app.set :haml, Proc.new {setup(app)}
         app.enable :static
       end
 
