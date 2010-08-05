@@ -46,6 +46,45 @@ describe Sinatra::Pages do
     end
   end
   
+  context 'HAML settings' do
+    context 'by default' do
+      subject {app}
+      its(:html) {should == :v5}
+      its(:format) {should == :tidy}
+      its(:escaping) {should == false}
+      its(:haml) {should == {:format => :html5, :ugly => false, :escape_html => false}}
+    end
+    
+    context 'on defining' do
+      before do
+        app.set :html, :v5
+        app.set :format, :tidy
+        app.disable :escaping
+      end
+      
+      [:v4, :vX].each do |value|
+        context '#html' do
+          subject {app.set :html, value}
+          its(:html) {should == value}
+          it {subject.haml[:format].should == (value == :v4 ? :html4 : :xhtml)}
+        end
+      end
+      
+      context '#format' do
+        subject {app.set :format, :ugly}
+        its(:format) {should == :ugly}
+        it {subject.haml[:ugly].should == true}
+      end
+      
+      context '#escaping' do
+        #subject {app.enable :escaping}
+        subject {app.set :escaping, true}
+        its(:escaping) {should == true}
+        it {subject.haml[:escape_html].should == true}
+      end
+    end
+  end
+  
   context 'on HTTP GET' do
     before :all do
       PAGES.each{|page| create_file_for(page, app.views)}
