@@ -80,9 +80,18 @@ You can try your modular application by executing the following command in your 
   
 In order to verify if you application is working, open your web browser with the address that will appear after the execution described above.
 
-### Customization
-This extension assumes the __:views__ and __:public__ configuration are located on the *./views* and *./public* directories respectively. In any case, you are able to change these values as required.
+### Built-in variables
+This extension have a default configuration that assumes the __:views__ and __:public__ configuration are located on the *./views* and *./public* directories respectively. As well, it preset the __:html__ version to use as *:v5*, the way to __:format__ the HTML code as *:tidy* and the HTML __:escaping__ is disabled by default.
 
+In any case, you are able to change these values as required.
+
+* __:views__ => <*Path to your views directory*>
+* __:public__ => <*Path to your public directory*>
+* __:html__ => [*:v4*, *:vX*, *:v5*]
+* __:format__ => [*:tidy*, *:ugly*]
+* __:escaping__ => [*true*, *false*]
+
+### Customization
 Depending on the kind of Sinatra application you're developing, you should proceed as follows. If you follow the __Classic__ approach, then you just need to set these configuration parameters in the *app.rb* file.
 
     require 'sinatra'
