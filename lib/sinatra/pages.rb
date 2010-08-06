@@ -6,7 +6,9 @@ module Sinatra
   module Pages
     def self.registered(app)
       app.set :html, :v5
+      app.set :stylesheet, :css
       app.set :format, :tidy
+      app.set :cache, :write
       app.disable :escaping
       
       app.configure do
