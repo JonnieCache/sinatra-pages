@@ -63,6 +63,22 @@ module Sinatra
       
       options
     end
+    
+    def styles_directory(settings)
+      %w[*.css *.scss *.sass].each do |extension|
+        files = Dir.glob File.join(settings.public, '**', extension)
+
+        return File.dirname(files.first) unless files.empty? 
+      end
+
+      %w[css styles stylesheets].each do |directory| 
+        directory = File.join settings.public, directory
+
+        return directory if File.exist?(directory)
+      end
+
+      nil
+    end
   end
   
   register Pages
