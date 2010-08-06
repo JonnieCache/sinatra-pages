@@ -89,13 +89,51 @@ describe Sinatra::Pages do
     end
   end
   
+  context 'SASS settings' do
+    context 'by default' do
+      subject {app}
+      its(:stylesheet) {should == :css}
+      its(:format) {should == :tidy}
+      its(:cache) {should == :write}
+      its(:sass) {should == {:style => :expanded, :syntax => :css, :cache => true}}
+    end
+    
+    context 'on defining' do
+      before do
+        app.set :stylesheet, :css
+        app.set :format, :tidy
+        app.set :cache, :write
       end
       
-      context '#escaping' do
-        #subject {app.enable :escaping}
-        subject {app.set :escaping, true}
-        its(:escaping) {should == true}
-        it {subject.haml[:escape_html].should == true}
+      [:css, :sass, :scss].each do |stylesheet|
+        context '#stylesheet' do
+          subject {app.set :stylesheet, stylesheet}
+          its(:stylesheet) {should == stylesheet}
+          it {subject.sass[:syntax].should == stylesheet}
+        end
+      end
+      
+      [:tidy, :ugly].each do |format|
+        context '#format' do
+          subject {app.set :format, format}
+          its(:format) {should == format}
+          format == :tidy ? it {subject.sass[:style].should == :expanded} :
+                            it {subject.sass[:style].should == :compressed}
+        end
+      end
+      
+      [:write, :read].each do |cache|
+        context '#cache' do
+          subject {app.set :cache, cache}
+          its(:cache) {should == cache}
+          if cache == :write
+            it {subject.sass[:cache].should == true}
+            it {subject.sass[:read_cache].should == nil}
+          else
+            it {subject.sass[:cache].should == nil}
+            it {subject.sass[:read_cache].should == true}
+          end
+        end
       end
     end
   end
