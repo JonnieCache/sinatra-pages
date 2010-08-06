@@ -41,15 +41,23 @@ module Sinatra
 
     private
     
-    def setup(app)
-      options = {:format => nil, :ugly => nil, :escape_html => nil}
-
-      options[:ugly] = app.format == :ugly ? true : false
-      options[:escape_html] = app.escaping
-      options[:format] = case app.html
-        when :v5 then :html5
-        when :v4 then :html4
-        when :vX then :xhtml
+    def setup(type, settings)
+      options = {}
+      
+      case type
+        when :haml
+          options[:ugly] = settings.format == :ugly ? true : false
+          options[:escape_html] = settings.escaping
+          options[:format] = case settings.html
+            when :v5 then :html5
+            when :v4 then :html4
+            when :vX then :xhtml
+          end
+        when :sass
+          options[:style] = settings.format == :tidy ? :expanded : :compressed
+          options[:syntax] = settings.stylesheet
+          options[:cache] = true if settings.cache == :write
+          options[:read_cache] = true if settings.cache == :read
       end
       
       options
