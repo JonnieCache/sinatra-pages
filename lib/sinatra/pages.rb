@@ -18,7 +18,13 @@ module Sinatra
         app.set :styles, Proc.new {styles_directory app}
         app.enable :static
       end
-
+      
+      app.get '/*.css' do
+        content_type :css, :charset => 'utf-8'
+        
+        sass File.basename(params[:splat].first).to_sym, :views => settings.styles
+      end
+      
       %w[/? /:page/? /*/:page/?].each do |route|
         app.get route do
           params[:page] = 'home' if params[:page].nil?
