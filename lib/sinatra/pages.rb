@@ -15,6 +15,7 @@ module Sinatra
         app.set :root, Dir.pwd
         app.set :haml, Proc.new {setup :haml, app}
         app.set :sass, Proc.new {setup :sass, app}
+        app.set :styles, Proc.new {styles_directory app}
         app.enable :static
       end
 
