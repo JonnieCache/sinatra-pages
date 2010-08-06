@@ -62,18 +62,33 @@ describe Sinatra::Pages do
         app.disable :escaping
       end
       
-      [:v4, :vX].each do |value|
+      [:v4, :vX].each do |html|
         context '#html' do
-          subject {app.set :html, value}
-          its(:html) {should == value}
-          it {subject.haml[:format].should == (value == :v4 ? :html4 : :xhtml)}
+          subject {app.set :html, html}
+          its(:html) {should == html}
+          it {subject.haml[:format].should == (html == :v4 ? :html4 : :xhtml)}
         end
       end
       
-      context '#format' do
-        subject {app.set :format, :ugly}
-        its(:format) {should == :ugly}
-        it {subject.haml[:ugly].should == true}
+      [:tidy, :ugly].each do |format|
+        context '#format' do
+          subject {app.set :format, format}
+          its(:format) {should == format}
+          it {subject.haml[:ugly].should == (format == :ugly ? true : false)}
+        end
+      end
+      
+      [true, false].each do |escaping|
+        context '#escaping' do
+          #subject {app.enable :escaping}
+          subject {app.set :escaping, escaping}
+          its(:escaping) {should == escaping}
+          it {subject.haml[:escape_html].should == escaping}
+        end
+      end
+    end
+  end
+  
       end
       
       context '#escaping' do
