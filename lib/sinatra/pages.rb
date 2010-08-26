@@ -15,7 +15,7 @@ module Sinatra
         app.set :root, Dir.pwd
         app.set :haml, Proc.new {setup :haml, app}
         app.set :sass, Proc.new {setup :sass, app}
-        app.set :styles, Proc.new {styles_directory app}
+        app.set :styles, Proc.new {find_styles_directory public}
         app.enable :static
       end
       
@@ -71,15 +71,15 @@ module Sinatra
       options
     end
     
-    def styles_directory(settings)
+    def find_styles_directory(public_directory)
       %w[*.css *.scss *.sass].each do |extension|
-        files = Dir.glob File.join(settings.public, '**', extension)
+        files = Dir.glob File.join(public_directory, '**', extension)
 
         return File.dirname(files.first) unless files.empty? 
       end
 
       %w[css styles stylesheets].each do |directory| 
-        directory = File.join settings.public, directory
+        directory = File.join public_directory, directory
 
         return directory if File.exist?(directory)
       end
