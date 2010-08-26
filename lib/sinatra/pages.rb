@@ -13,8 +13,8 @@ module Sinatra
       
       app.configure do
         app.set :root, Dir.pwd
-        app.set :haml, Proc.new {setup :haml, app}
-        app.set :sass, Proc.new {setup :sass, app}
+        app.set :haml, Proc.new {generate_setup :haml, app}
+        app.set :sass, Proc.new {generate_setup :sass, app}
         app.set :styles, Proc.new {find_styles_directory public}
         app.enable :static
       end
@@ -49,7 +49,7 @@ module Sinatra
 
     private
     
-    def setup(type, settings)
+    def generate_setup(type, settings)
       options = {}
       
       case type
