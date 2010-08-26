@@ -19,10 +19,12 @@ module Sinatra
         app.enable :static
       end
       
-      app.get '/*.css' do
-        content_type :css, :charset => 'utf-8'
-        
-        sass File.basename(params[:splat].first).to_sym, :views => settings.styles
+      unless app.stylesheet == :css
+        app.get '/*.css' do
+          content_type :css, :charset => 'utf-8'
+
+          sass File.basename(params[:splat].first).to_sym, :views => settings.styles
+        end
       end
       
       %w[/? /:page/? /*/:page/?].each do |route|
