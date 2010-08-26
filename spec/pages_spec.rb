@@ -92,10 +92,10 @@ describe Sinatra::Pages do
   context 'SASS settings' do
     context 'by default' do
       subject {app}
-      its(:stylesheet) {should == :css}
+      its(:stylesheet) {should == :scss}
       its(:format) {should == :tidy}
       its(:cache) {should == :write}
-      its(:sass) {should == {:style => :expanded, :syntax => :css, :cache => true}}
+      its(:sass) {should == {:style => :expanded, :syntax => :scss, :cache => true}}
     end
     
     context 'on defining' do
