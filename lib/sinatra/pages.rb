@@ -5,17 +5,22 @@ require 'sass'
 module Sinatra
   module Pages
     def self.registered(app)
+      # Directories settings
+      app.set :root, Dir.pwd
+      app.set :pages, Proc.new {app.views}
+      # HAML settings
       app.set :html, :v5
-      app.set :stylesheet, :scss
-      app.set :format, :tidy
-      app.set :cache, :write
       app.disable :escaping
+      # SASS settings
+      app.set :stylesheet, :scss
+      app.set :cache, :write
+      # HAML/SASS settings
+      app.set :format, :tidy
       
       app.configure do
-        app.set :root, Dir.pwd
+        app.set :styles, Proc.new {find_styles_directory app.public}
         app.set :haml, Proc.new {generate_setup :haml, app}
         app.set :sass, Proc.new {generate_setup :sass, app}
-        app.set :styles, Proc.new {find_styles_directory public}
         app.enable :static
       end
       
