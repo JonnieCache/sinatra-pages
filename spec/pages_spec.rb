@@ -14,6 +14,7 @@ describe Sinatra::Pages do
       its(:root) {should == Dir.pwd}
       its(:public) {should == File.join(Dir.pwd, 'public')}
       its(:views) {should == File.join(Dir.pwd, 'views')}
+      its(:pages) {should == File.join(Dir.pwd, 'views')}
       its(:static) {should == true} 
     end
 
@@ -25,6 +26,7 @@ describe Sinatra::Pages do
         its(:root) {should == File.dirname(__FILE__)}
         its(:public) {should == File.join(File.dirname(__FILE__), 'public')}
         its(:views) {should == File.join(File.dirname(__FILE__), 'views')}
+        its(:pages) {should == File.join(File.dirname(__FILE__), 'views')}
         its(:static) {should == true}
       end
 
@@ -33,6 +35,7 @@ describe Sinatra::Pages do
         its(:root) {should == Dir.pwd}
         its(:public) {should == File.join(File.dirname(__FILE__), 'public')}
         its(:views) {should == File.join(Dir.pwd, 'views')}
+        its(:pages) {should == File.join(Dir.pwd, 'views')}
         its(:static) {should == true}
       end
 
@@ -41,6 +44,17 @@ describe Sinatra::Pages do
         its(:root) {should == Dir.pwd}
         its(:public) {should == File.join(Dir.pwd, 'public')}
         its(:views) {should == File.join(File.dirname(__FILE__), 'views')}
+        its(:pages) {should == File.join(File.dirname(__FILE__), 'views')}
+        its(:static) {should == true}
+      end
+      
+      context '#pages' 
+        before {app.set :root, Dir.pwd}
+        subject {app.set :pages, File.join(File.dirname(__FILE__), 'pages')}
+        its(:root) {should == Dir.pwd}
+        its(:public) {should == File.join(Dir.pwd, 'public')}
+        its(:views) {should == File.join(Dir.pwd, 'views')}
+        its(:pages) {should == File.join(File.dirname(__FILE__), 'pages')}
         its(:static) {should == true}
       end
     end
