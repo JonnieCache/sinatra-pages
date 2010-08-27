@@ -48,7 +48,7 @@ describe Sinatra::Pages do
         its(:static) {should == true}
       end
       
-      context '#pages' 
+      context '#pages' do
         before {app.set :root, Dir.pwd}
         subject {app.set :pages, File.join(File.dirname(__FILE__), 'pages')}
         its(:root) {should == Dir.pwd}
