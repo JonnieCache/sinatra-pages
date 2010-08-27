@@ -1,5 +1,5 @@
 # Sinatra Pages
-This is a [Sinatra][1] extension that renders any static page (including sub-pages) located under your *views/* directory  using [HAML][2] as the rendering engine. By combining the main driving principles behind these two libraries, this extension allows you to build static websites for [Sinatra][2] or directly on [Rack][3] in no time.
+This is a [Sinatra][1] extension that renders any static page (including sub-pages) located under your *:pages* directory  using [HAML][2] and [SASS][3] as the rendering engines for HTML and stylesheets. By combining the main driving principles behind these two libraries, this extension allows you to build static websites for [Sinatra][2] or directly on [Rack][4] in no time.
 
 ### Installation
 In order to install this gem, you just need to install the gem from your command line like this:
@@ -9,7 +9,9 @@ In order to install this gem, you just need to install the gem from your command
 You should take into account that this library have the following dependencies:
 
 * [sinatra][1]
+* [tilt][13]
 * [haml][2]
+* [sass][3]
 
 ### Usage
 Before using this extension, you should create the following file structure inside your application.
@@ -24,10 +26,8 @@ Before using this extension, you should create the following file structure insi
               |- ...
           |- styles/
               |- ...
-     |- views/
+     |- pages/
           |- home.haml
-          |- layout.haml
-          |- not_found.haml
           |- a_file.haml
           |- another_file.haml
           |- ...
@@ -37,8 +37,11 @@ Before using this extension, you should create the following file structure insi
                   |- yet_another_file/
                             |- still_another_file.haml
                             |- ...
+     |- views/
+          |- layout.haml
+          |- not_found.haml
 
-Please notice that this extension requires you to create the *home.haml* and the *not_found.haml* files inside your *views/* directory on your application. Then you're free to add a *layout.haml* (if required) and all the static pages you need under any file structure hierarchy inside this directory. Please don't forget to give the extension *.haml* to all your views.
+Please notice that this extension requires you to create the *layout.haml* (if required) and other common pages inside your *:views* directory on your application. Then you're free to add the static pages you need under any file structure hierarchy inside the *:pages* directory. Please don't forget to give the extension *.haml* to all your views.
 
 Now, as any other existing extension, there are two possible use cases depending the kind of Sinatra application you're developing. If you follow the __Classic__ approach, then you just need to require this extension in the *app.rb* file.
 
@@ -81,15 +84,16 @@ You can try your modular application by executing the following command in your 
 In order to verify if you application is working, open your web browser with the address that will appear after the execution described above.
 
 ### Built-in variables
-This extension have a default configuration that assumes the __:views__ and __:public__ configuration are located on the *./views* and *./public* directories respectively. As well, it preset the __:html__ version to use as *:v5*, the way to __:format__ the HTML code as *:tidy* and the HTML __:escaping__ is disabled by default.
+This extension defines the following setup as default. In any case, you are able to change these values as required.
 
-In any case, you are able to change these values as required.
-
-* __:views__ => <*Path to your views directory*>
-* __:public__ => <*Path to your public directory*>
-* __:html__ => [*:v4*, *:vX*, *:v5*]
-* __:format__ => [*:tidy*, *:ugly*]
-* __:escaping__ => [*true*, *false*]
+* __:public__ => <*Path to your public directory*> || **settings.root/public**
+* __:views__ => <*Path to your views directory*> || **settings.root/views**
+* __:pages__ => <*Path to your pages directory*> || **settings.root/views**
+* __:html__ => [*:v4*, *:vX*, *:v5*] || **:v5**
+* __:stylesheet__ => [*:css*, *:sass*, *:scss*] || **:scss**
+* __:format__ => [*:tidy*, *:ugly*] || **:tidy**
+* __:cache__ => [*:write*, *:read*] || **:write**
+* __:escaping__ => [*true*, *false*] || **:false**
 
 ### Customization
 Depending on the kind of Sinatra application you're developing, you should proceed as follows. If you follow the __Classic__ approach, then you just need to set these configuration parameters in the *app.rb* file.
@@ -130,35 +134,37 @@ Everybody is welcome to contribute to this project by commenting the source code
 
 In case you would like to contribute on this library, here's the list of extra dependencies you would need:
 
-* [rspec][4]
-* [rcov][5]
-* [rack-test][6]
+* [rspec][5]
+* [rcov][6]
+* [rack-test][7]
 
 ### Contributors
-* [Julio Javier Cicchelli][7]
+* [Julio Javier Cicchelli][8]
 
 ### Sites
 The following sites are proudly using this extension:
 
-* [Rock & Code][10]
-* [Izcheznali][11]
+* [Rock & Code][11]
+* [Izcheznali][12]
 
 If your site is also using this extension, please let us know!
 
 ### Notes
-This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][8].
+This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][9].
 
 ### License
-This extension is licensed under the [MIT License][9].
+This extension is licensed under the [MIT License][10].
 
 [1]: http://www.sinatrarb.com/
 [2]: http://haml-lang.com/
-[3]: http://rack.rubyforge.org/
-[4]: http://rspec.info/
-[5]: http://eigenclass.org/hiki/rcov
-[6]: http://gitrdoc.com/brynary/rack-test/tree/master
-[7]: http://github.com/mr-rock
-[8]: http://www.ruby-lang.org/en/
-[9]: http://creativecommons.org/licenses/MIT/
-[10]: http://rock-n-code.com
-[11]: http://izcheznali.net
+[3]: http://sass-lang.com/
+[4]: http://rack.rubyforge.org/
+[5]: http://rspec.info/
+[6]: http://eigenclass.org/hiki/rcov
+[7]: http://gitrdoc.com/brynary/rack-test/tree/master
+[8]: http://github.com/mr-rock
+[9]: http://www.ruby-lang.org/en/
+[10]: http://creativecommons.org/licenses/MIT/
+[11]: http://rock-n-code.com
+[12]: http://izcheznali.net
+[13]: http://github.com/rtomayko/tilt
