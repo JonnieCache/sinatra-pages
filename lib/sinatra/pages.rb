@@ -41,7 +41,8 @@ module Sinatra
         app.get route do
           params[:page] = 'home' if params[:page].nil?
 
-          page_to_render = params[:splat].nil? ? '' : "#{params[:splat].first}/"
+          page_to_render = settings.views != settings.pages ? "#{settings.pages.split('/').last}/" : ''
+          page_to_render << "#{params[:splat].first}/" unless params[:splat].nil?
           page_to_render << params[:page]
 
           begin
