@@ -8,7 +8,7 @@ describe Sinatra::Pages do
     TestApp
   end
 
-  context 'built-in settings' do
+  context 'Directories settings' do
     context 'by default' do
       subject {app}
       its(:root) {should == Dir.pwd}
