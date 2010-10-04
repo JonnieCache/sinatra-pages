@@ -47,15 +47,5 @@ Spec::Rake::SpecTask.new :spec do |task|
   task.rcov = false
 end
 
-desc 'Functional testing with RSpec and RCov.'
-Spec::Rake::SpecTask.new :rcov do |task|
-  task.spec_opts = %w[--colour --format progress --loadby mtime --timeout 20 --diff --backtrace]
-  task.libs = %w[lib spec]
-  task.spec_files = FileList['spec/*_spec.rb']
-  task.rcov = true
-  task.rcov_dir = 'cov'
-  task.rcov_opts = %w[--text-summary --exclude spec/]
-end
-
 desc "Default is Functional testing with RSpec."
 task :default => [:spec]
