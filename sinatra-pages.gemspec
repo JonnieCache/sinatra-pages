@@ -16,7 +16,6 @@ GEM = Gem::Specification.new do |specification|
   specification.add_runtime_dependency 'tilt', '>= 1.0.1'
   specification.add_runtime_dependency 'haml', '>= 3.0.15'
   specification.add_development_dependency 'rspec', '>= 1.3.0'
-  specification.add_development_dependency 'rcov', '>= 0.9.8'
   specification.add_development_dependency 'rack-test', '>= 0.5.4'
   specification.files = %w[LICENSE README.markdown Rakefile] + Dir.glob('{lib,spec}/**/*')
   specification.test_files = Dir.glob('spec/*.rb')
