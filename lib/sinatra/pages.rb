@@ -23,15 +23,6 @@ module Sinatra
         app.set :sass, Proc.new {generate_setup :sass, app}
       end
       
-      app.before do
-        unless settings.views == settings.pages
-          unless File.exist?(File.join settings.views, settings.pages.split('/').last)
-            FileUtils.ln_s settings.pages, settings.views \
-              if (File.exist?(settings.views) && File.exist?(settings.pages))
-          end
-        end
-      end
-      
       app.condition {app.stylesheet != :css}
       app.get '/*.css' do
         content_type :css, :charset => 'utf-8'
