@@ -10,7 +10,7 @@ module Sinatra
         app.enable :static
       end
 
-      app.set :pages, Proc.new {File.join app.root, %w[pages]}
+      app.set :pages, Proc.new {app.views}
       app.set :styles, Proc.new {find_styles_directory app.public}
       app.set :html, :v5
       app.set :stylesheet, :scss
