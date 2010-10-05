@@ -9,7 +9,7 @@ In order to install this gem, you just need to install the gem from your command
 You should take into account that this library have the following dependencies:
 
 * [sinatra][1]
-* [tilt][13]
+* [tilt][12]
 * [haml][2]
 * [sass][3]
 
@@ -135,36 +135,36 @@ Everybody is welcome to contribute to this project by commenting the source code
 In case you would like to contribute on this library, here's the list of extra dependencies you would need:
 
 * [rspec][5]
-* [rcov][6]
-* [rack-test][7]
+* [rack-test][6]
 
 ### Contributors
-* [Julio Javier Cicchelli][8]
+* [Julio Javier Cicchelli][7]
 
 ### Sites
 The following sites are proudly using this extension:
 
-* [Rock & Code][11]
-* [Izcheznali][12]
+* [Rock & Code][10]
+* [Izcheznali][11]
+* [Amsterdam Ruby User Group][13]
 
 If your site is also using this extension, please let us know!
 
 ### Notes
-This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][9].
+This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][8].
 
 ### License
-This extension is licensed under the [MIT License][10].
+This extension is licensed under the [MIT License][9].
 
 [1]: http://www.sinatrarb.com/
 [2]: http://haml-lang.com/
 [3]: http://sass-lang.com/
 [4]: http://rack.rubyforge.org/
 [5]: http://rspec.info/
-[6]: http://eigenclass.org/hiki/rcov
-[7]: http://gitrdoc.com/brynary/rack-test/tree/master
-[8]: http://github.com/mr-rock
-[9]: http://www.ruby-lang.org/en/
-[10]: http://creativecommons.org/licenses/MIT/
-[11]: http://rock-n-code.com
-[12]: http://izcheznali.net
-[13]: http://github.com/rtomayko/tilt
+[6]: http://gitrdoc.com/brynary/rack-test/tree/master
+[7]: http://github.com/mr-rock
+[8]: http://www.ruby-lang.org/en/
+[9]: http://creativecommons.org/licenses/MIT/
+[10]: http://rock-n-code.com
+[11]: http://izcheznali.net
+[12]: http://github.com/rtomayko/tilt
+[13]: http://amsterdam-rb.org
