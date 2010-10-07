@@ -93,6 +93,7 @@ This extension defines the following setup as default. In any case, you are able
 * __:stylesheet__ => [*:css*, *:sass*, *:scss*] || **:scss**
 * __:format__ => [*:tidy*, *:ugly*] || **:tidy**
 * __:cache__ => [*:write*, *:read*] || **:write**
+* __:encoding__ => [*:ascii*, *:utf8*, *:utf16*, *:utf32*] || **:utf8**
 * __:escaping__ => [*true*, *false*] || **:false**
 
 ### Customization
