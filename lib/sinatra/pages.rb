@@ -16,6 +16,7 @@ module Sinatra
       app.set :stylesheet, :scss
       app.set :cache, :write
       app.set :format, :tidy
+      app.set :encoding, :utf8
       app.disable :escaping
       
       app.configure do
@@ -72,6 +73,13 @@ module Sinatra
           options[:syntax] = settings.stylesheet
           options[:cache] = true if settings.cache == :write
           options[:read_cache] = true if settings.cache == :read
+      end
+      
+      options[:encoding] = case settings.encoding
+        when :utf8 then 'utf-8'
+        when :utf16 then 'utf-16'
+        when :utf32 then 'utf-32'
+        when :ascii then 'ascii-8bits'
       end
       
       options
