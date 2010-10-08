@@ -75,11 +75,13 @@ module Sinatra
           options[:read_cache] = true if settings.cache == :read
       end
       
-      options[:encoding] = case settings.encoding
-        when :utf8 then 'utf-8'
-        when :utf16 then 'utf-16'
-        when :utf32 then 'utf-32'
-        when :ascii then 'ascii-8bits'
+      if RUBY_VERSION.to_f > 1.8
+        options[:encoding] = case settings.encoding
+          when :utf8 then 'utf-8'
+          when :utf16 then 'utf-16'
+          when :utf32 then 'utf-32'
+          when :ascii then 'ascii-8bits'
+        end
       end
       
       options
