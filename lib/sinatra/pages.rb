@@ -16,7 +16,7 @@ module Sinatra
       app.set :stylesheet, :scss
       app.set :cache, :write
       app.set :format, :tidy
-      app.set :encoding, :utf8
+      app.set :encoding, :utf8 if RUBY_VERSION.to_f > 1.8
       app.disable :escaping
       
       app.configure do
