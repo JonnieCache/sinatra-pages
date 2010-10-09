@@ -65,7 +65,12 @@ describe Sinatra::Pages do
       its(:html) {should == :v5}
       its(:format) {should == :tidy}
       its(:escaping) {should == false}
-      its(:haml) {should == {:format => :html5, :ugly => false, :escape_html => false}}
+      if RUBY_VERSION.to_f > 1.8
+        its(:encoding) {should == :utf8}
+        its(:haml) {should == {:format => :html5, :ugly => false, :escape_html => false, :encoding => 'utf-8'}}
+      else
+        its(:haml) {should == {:format => :html5, :ugly => false, :escape_html => false}}
+      end
     end
     
     context 'on defining' do
@@ -99,16 +104,37 @@ describe Sinatra::Pages do
           it {subject.haml[:escape_html].should == escaping}
         end
       end
+      
+      if RUBY_VERSION.to_f > 1.8
+        [:utf8, :utf16, :utf32, :ascii].each do |encoding|
+          context '#encoding' do
+            subject {app.set :encoding, encoding}
+            its(:encoding) {should == encoding}
+            case encoding
+            when :utf8 then it {subject.haml[:encoding].should == 'utf-8'}
+            when :utf16 then it {subject.haml[:encoding].should == 'utf-16'}
+            when :utf32 then it {subject.haml[:encoding].should == 'utf-32'}
+            when :ascii then it {subject.haml[:encoding].should == 'ascii-8bits'}
+            end
+          end
+        end
+      end
     end
   end
   
   context 'SASS settings' do
     context 'by default' do
+      before {app.set :encoding, :utf8}
       subject {app}
       its(:stylesheet) {should == :scss}
       its(:format) {should == :tidy}
       its(:cache) {should == :write}
-      its(:sass) {should == {:style => :expanded, :syntax => :scss, :cache => true}}
+      if RUBY_VERSION.to_f > 1.8
+        its(:encoding) {should == :utf8}
+        its(:sass) {should == {:style => :expanded, :syntax => :scss, :cache => true, :encoding => 'utf-8'}}
+      else
+        its(:sass) {should == {:style => :expanded, :syntax => :scss, :cache => true}}
+      end
     end
     
     context 'on defining' do
@@ -145,6 +171,21 @@ describe Sinatra::Pages do
           else
             it {subject.sass[:cache].should == nil}
             it {subject.sass[:read_cache].should == true}
+          end
+        end
+      end
+      
+      if RUBY_VERSION.to_f > 1.8
+        [:utf8, :utf16, :utf32, :ascii].each do |encoding|
+          context '#encoding' do
+            subject {app.set :encoding, encoding}
+            its(:encoding) {should == encoding}
+            case encoding
+            when :utf8 then it {subject.sass[:encoding].should == 'utf-8'}
+            when :utf16 then it {subject.sass[:encoding].should == 'utf-16'}
+            when :utf32 then it {subject.sass[:encoding].should == 'utf-32'}
+            when :ascii then it {subject.sass[:encoding].should == 'ascii-8bits'}
+            end
           end
         end
       end
