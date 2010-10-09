@@ -151,7 +151,7 @@ The following sites are proudly using this extension:
 If your site is also using this extension, please let us know!
 
 ### Notes
-This extension have been tested on the versions 1.8.6, 1.8.7 and 1.9.1 of the [Ruby interpreter][8].
+This extension have been tested on [MRI][8] 1.8.6, 1.8.7, 1.9.1 and 1.9.2.
 
 ### License
 This extension is licensed under the [MIT License][9].
