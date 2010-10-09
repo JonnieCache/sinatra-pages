@@ -26,20 +26,20 @@ Before using this extension, you should create the following file structure insi
               |- ...
           |- styles/
               |- ...
-     |- pages/
-          |- home.haml
-          |- a_file.haml
-          |- another_file.haml
-          |- ...
-          |- another_file/
-                  |- yet_another_file.haml
-                  |- ...
-                  |- yet_another_file/
-                            |- still_another_file.haml
-                            |- ...
      |- views/
           |- layout.haml
           |- not_found.haml
+          |- pages/
+                |- home.haml
+                |- a_file.haml
+                |- another_file.haml
+                |- ...
+                |- another_file/
+                        |- yet_another_file.haml
+                        |- ...
+                        |- yet_another_file/
+                                  |- still_another_file.haml
+                                  |- ...
 
 Please notice that this extension requires you to create the *layout.haml* (if required) and other common pages inside your *:views* directory on your application. Then you're free to add the static pages you need under any file structure hierarchy inside the *:pages* directory. Please don't forget to give the extension *.haml* to all your views.
 
