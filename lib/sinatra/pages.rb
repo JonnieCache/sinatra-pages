@@ -4,11 +4,14 @@ require 'sass'
 
 module Sinatra
   module Pages
+  
     def self.registered(app)
       app.configure do
         app.set :root, Dir.pwd
         app.enable :static
       end
+      
+      app.helpers Helpers
 
       app.set :pages, Proc.new {app.views}
       app.set :styles, Proc.new {find_styles_directory app.public}
@@ -40,7 +43,7 @@ module Sinatra
           page_to_render << params[:page]
 
           begin
-            haml page_to_render.to_sym, :layout => !request.xhr?
+            haml page_to_render.to_sym, :layout => layout_exists?(page_to_render) ? "#{page_to_render}_layout".to_sym : !request.xhr?
           rescue Errno::ENOENT
             halt 404
           end
@@ -52,6 +55,8 @@ module Sinatra
 
         haml :not_found, :layout => !request.xhr?
       end
+      
+
     end
 
     private
@@ -102,6 +107,13 @@ module Sinatra
 
       nil
     end
+    
+    module Helpers
+      def layout_exists?(page)
+        File.exist? settings.views+'/'+page+'_layout.haml'
+      end
+    end
+      
   end
   
   register Pages
