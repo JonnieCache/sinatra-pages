@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Sinatra::Pages do
   include Rack::Test::Methods
   include HelperMethods
-  
+
   def app
     TestApp
   end
@@ -15,12 +15,19 @@ describe Sinatra::Pages do
       its(:public) {should == File.join(Dir.pwd, 'public')}
       its(:views) {should == File.join(Dir.pwd, 'views')}
       its(:pages) {should == File.join(Dir.pwd, 'views')}
-      its(:static) {should == true} 
+      its(:static) {should == true}
     end
 
     context 'on defining' do
       before {app.set :root, Dir.pwd}
       
+      after(:all) do
+        app.set :root, File.dirname(__FILE__)
+        app.set :public, File.join(File.dirname(__FILE__), 'public')
+        app.set :views, File.join(File.dirname(__FILE__), 'views')
+        app.set :pages, File.join(File.dirname(__FILE__), 'views')
+      end
+
       context '#root' do
         subject {app.set :root, File.dirname(__FILE__)}
         its(:root) {should == File.dirname(__FILE__)}
@@ -47,7 +54,7 @@ describe Sinatra::Pages do
         its(:pages) {should == File.join(File.dirname(__FILE__), 'views')}
         its(:static) {should == true}
       end
-      
+
       context '#pages' do
         subject {app.set :pages, File.join(app.views, 'pages')}
         its(:root) {should == Dir.pwd}
@@ -58,7 +65,7 @@ describe Sinatra::Pages do
       end
     end
   end
-  
+
   context 'HAML settings' do
     context 'by default' do
       subject {app}
@@ -72,14 +79,14 @@ describe Sinatra::Pages do
         its(:haml) {should == {:format => :html5, :ugly => false, :escape_html => false}}
       end
     end
-    
+
     context 'on defining' do
       before do
         app.set :html, :v5
         app.set :format, :tidy
         app.disable :escaping
       end
-      
+
       [:v4, :vX].each do |html|
         context '#html' do
           subject {app.set :html, html}
@@ -87,7 +94,7 @@ describe Sinatra::Pages do
           it {subject.haml[:format].should == (html == :v4 ? :html4 : :xhtml)}
         end
       end
-      
+
       [:tidy, :ugly].each do |format|
         context '#format' do
           subject {app.set :format, format}
@@ -95,7 +102,7 @@ describe Sinatra::Pages do
           it {subject.haml[:ugly].should == (format == :ugly ? true : false)}
         end
       end
-      
+
       [true, false].each do |escaping|
         context '#escaping' do
           #subject {app.enable :escaping}
@@ -104,7 +111,7 @@ describe Sinatra::Pages do
           it {subject.haml[:escape_html].should == escaping}
         end
       end
-      
+
       if RUBY_VERSION.to_f > 1.8
         [:utf8, :utf16, :utf32, :ascii].each do |encoding|
           context '#encoding' do
@@ -121,7 +128,7 @@ describe Sinatra::Pages do
       end
     end
   end
-  
+
   context 'SASS settings' do
     context 'by default' do
       before {app.set :encoding, :utf8}
@@ -136,14 +143,14 @@ describe Sinatra::Pages do
         its(:sass) {should == {:style => :expanded, :syntax => :scss, :cache => true}}
       end
     end
-    
+
     context 'on defining' do
       before do
         app.set :stylesheet, :css
         app.set :format, :tidy
         app.set :cache, :write
       end
-      
+
       [:css, :sass, :scss].each do |stylesheet|
         context '#stylesheet' do
           subject {app.set :stylesheet, stylesheet}
@@ -151,16 +158,16 @@ describe Sinatra::Pages do
           it {subject.sass[:syntax].should == stylesheet}
         end
       end
-      
+
       [:tidy, :ugly].each do |format|
         context '#format' do
           subject {app.set :format, format}
           its(:format) {should == format}
           format == :tidy ? it {subject.sass[:style].should == :expanded} :
-                            it {subject.sass[:style].should == :compressed}
+            it {subject.sass[:style].should == :compressed}
         end
       end
-      
+
       [:write, :read].each do |cache|
         context '#cache' do
           subject {app.set :cache, cache}
@@ -174,7 +181,7 @@ describe Sinatra::Pages do
           end
         end
       end
-      
+
       if RUBY_VERSION.to_f > 1.8
         [:utf8, :utf16, :utf32, :ascii].each do |encoding|
           context '#encoding' do
@@ -191,17 +198,17 @@ describe Sinatra::Pages do
       end
     end
   end
-  
+
   context 'on HTTP GET' do
     before :all do
       PAGES.each{|page| create_file_for(page, app.views)}
     end
-    
+
     context 'in synchronous mode' do
       context 'with no Layout' do
         subject {File.join app.views, "#{file_of('Layout')}.haml"}
         it {File.exist?(subject).should == false}
-        
+
         context 'and with Home static page' do
           subject {File.join app.views, "#{file_of('Home')}.haml"}
           it {File.exist?(subject).should == true}
@@ -210,22 +217,23 @@ describe Sinatra::Pages do
               get route
 
               last_request.should_not be_xhr
+
               last_response.should be_ok
               last_response.body.chomp.should == file_of('Home')
             end
           end
         end
-        
+
         Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
           filename = File.basename(file, '.haml').capitalize
-          
+
           context "and with #{filename} static page" do
             subject {file}
             it {File.exist?(subject).should == true}
             it "should render it." do
               directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
               path = "#{directory}/#{File.basename(subject, '.haml')}"
-              
+
               [path, "#{path}/"].each do |route|
                 get route
 
@@ -236,13 +244,13 @@ describe Sinatra::Pages do
             end
           end
         end
-        
+
         context 'and with a non-existing static page' do
           subject {File.join app.views, "#{file_of('Do Not Exist')}.haml"}
           it {File.exist?(subject).should == false}
           it 'should render the Not Found page.' do
             path = "/#{file_of('Do Not Exist')}"
-            
+
             [path, "#{path}/"].each do |route|
               get route
 
@@ -253,15 +261,15 @@ describe Sinatra::Pages do
           end
         end
       end
-      
+
       context "with Layout" do
         before :all do
           create_file_for('Layout', app.views, ['Layout', '= yield'])
         end
-        
+
         subject {File.join app.views, "#{file_of('Layout')}.haml"}
         it {File.exist?(subject).should == true}
-        
+
         context 'and with Home static page' do
           subject {File.join app.views, "#{file_of('Home')}.haml"}
           it {File.exist?(subject).should == true}
@@ -276,17 +284,17 @@ describe Sinatra::Pages do
             end
           end
         end
-        
+
         Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
           filename = File.basename(file, '.haml').capitalize
-          
+
           context "and with #{filename} static page" do
             subject {file}
             it {File.exist?(subject).should == true}
             it "should render both." do
               directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
               path = "#{directory}/#{File.basename(subject, '.haml')}"
-              
+
               [path, "#{path}/"].each do |route|
                 get route
 
@@ -304,10 +312,10 @@ describe Sinatra::Pages do
           it {File.exist?(subject).should == false}
           it 'should render the Layout and the Not Found page.' do
             path = "/#{file_of('Do Not Exist')}"
-            
+
             [path, "#{path}/"].each do |route|
               get route
-
+              
               last_request.should_not be_xhr
               last_response.should be_not_found
               separate(last_response.body).first.should == 'Layout'
@@ -321,12 +329,12 @@ describe Sinatra::Pages do
         end
       end
     end
-    
+
     context "in asynchronous mode" do
       context 'with no Layout' do
         subject {File.join app.views, "#{file_of('Layout')}.haml"}
         it {File.exist?(subject).should == false}
-        
+
         context 'and with Home static page' do
           subject {File.join app.views, "#{file_of('Home')}.haml"}
           it {File.exist?(subject).should == true}
@@ -340,17 +348,17 @@ describe Sinatra::Pages do
             end
           end
         end
-        
+
         Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
           filename = File.basename(file, '.haml').capitalize
-          
+
           context "and with #{filename} static page" do
             subject {file}
             it {File.exist?(subject).should == true}
             it "should render it." do
               directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
               path = "#{directory}/#{File.basename(subject, '.haml')}"
-              
+
               [path, "#{path}/"].each do |route|
                 request route, :method => 'GET', :xhr => true
 
@@ -361,13 +369,13 @@ describe Sinatra::Pages do
             end
           end
         end
-        
+
         context 'and with a non-existing static page' do
           subject {File.join app.views, "#{file_of('Do Not Exist')}.haml"}
           it {File.exist?(subject).should == false}
           it 'should render the Not Found page.' do
             path = "/#{file_of('Do Not Exist')}"
-            
+
             [path, "#{path}/"].each do |route|
               request route, :method => 'GET', :xhr => true
 
@@ -378,15 +386,15 @@ describe Sinatra::Pages do
           end
         end
       end
-      
+
       context 'with a Layout' do
         before :all do
           create_file_for('Layout', app.views, ['Layout', '= yield'])
         end
-        
+
         subject {File.join app.views, "#{file_of('Layout')}.haml"}
         it {File.exist?(subject).should == true}
-        
+
         context 'and with Home static page' do
           subject {File.join app.views, "#{file_of('Home')}.haml"}
           it {File.exist?(subject).should == true}
@@ -400,17 +408,17 @@ describe Sinatra::Pages do
             end
           end
         end
-        
+
         Dir.glob "#{Dir.pwd}/views/**/*.haml" do |file|
           filename = File.basename(file, '.haml').capitalize
-          
+
           context "and with #{filename} static page" do
             subject {file}
             it {File.exist?(subject).should == true}
             it "should render both." do
               directory = File.dirname(subject)[5].nil? ? '' : File.dirname(subject)[5, File.dirname(subject).size]
               path = "#{directory}/#{File.basename(subject, '.haml')}"
-              
+
               [path, "#{path}/"].each do |route|
                 request route, :method => 'GET', :xhr => true
 
@@ -427,7 +435,7 @@ describe Sinatra::Pages do
           it {File.exist?(subject).should == false}
           it 'should render the Layout and the Not Found page.' do
             path = "/#{file_of('Do Not Exist')}"
-            
+
             [path, "#{path}/"].each do |route|
               request route, :method => 'GET', :xhr => true
 
@@ -443,7 +451,7 @@ describe Sinatra::Pages do
         end
       end
     end
-    
+
     after :all do
       FileUtils.rm_r app.views, :force => true
     end

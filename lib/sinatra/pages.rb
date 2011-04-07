@@ -34,17 +34,17 @@ module Sinatra
         sass File.basename(params[:splat].first).to_sym, :views => settings.styles
       end
 
-      %w[/? /:page/? /*/:page/?].each do |route|
+      %w[/? /:page.:format /*/:page.:format /:page/? /*/:page/?].each do |route|
         app.get route do
           params[:page] = 'home' if params[:page].nil?
 
           page_to_render = settings.views != settings.pages ? "#{settings.pages.split('/').last}/" : ''
           page_to_render << "#{params[:splat].first}/" unless params[:splat].nil?
           page_to_render << params[:page]
-
+          
           begin
-            haml page_to_render.to_sym, :layout => layout_exists?(page_to_render) ? "#{page_to_render}_layout".to_sym : !request.xhr?
-          rescue Errno::ENOENT
+            haml page_to_render.to_sym, :layout => get_layout(page_to_render, request.xhr?)
+          rescue Errno::ENOENT => e
             halt 404
           end
         end
@@ -52,8 +52,7 @@ module Sinatra
       
       app.not_found do
         params[:page] = 'not_found'
-
-        haml :not_found, :layout => !request.xhr?
+        haml :not_found, :layout => get_layout(:not_found, request.xhr?)
       end
       
 
@@ -109,8 +108,17 @@ module Sinatra
     end
     
     module Helpers
-      def layout_exists?(page)
-        File.exist? settings.views+'/'+page+'_layout.haml'
+      def get_layout(page, xhr)
+        if xhr
+          ret = false
+        elsif File.exist? File.join(settings.views, "#{page}_layout.haml")
+          ret = "#{page}_layout".to_sym
+        elsif File.exist? File.join(settings.views, "layout.haml")
+          ret = :layout
+        else
+          ret = false
+        end
+        return ret
       end
     end
       
