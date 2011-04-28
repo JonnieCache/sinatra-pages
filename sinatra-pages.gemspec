@@ -14,7 +14,8 @@ GEM = Gem::Specification.new do |specification|
   DESCRIPTION
   specification.add_runtime_dependency 'sinatra', '>= 1.0.0'
   specification.add_runtime_dependency 'tilt', '>= 1.1.0'
-  specification.add_runtime_dependency 'haml', '>= 3.0.21'
+  specification.add_runtime_dependency 'haml', '~> 3.0'
+  specification.add_runtime_dependency 'sass', '~> 3.0'
   specification.add_development_dependency 'rspec', '>= 1.3.0'
   specification.add_development_dependency 'rack-test', '>= 0.5.6'
   specification.files = %w[LICENSE README.markdown Rakefile] + Dir.glob('{lib,spec}/**/*')
