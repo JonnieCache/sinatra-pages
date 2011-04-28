@@ -110,15 +110,14 @@ module Sinatra
     module Helpers
       def get_layout(page, xhr)
         if xhr
-          ret = false
+          false
         elsif File.exist? File.join(settings.views, "#{page}_layout.haml")
-          ret = "#{page}_layout".to_sym
+          "#{page}_layout".to_sym
         elsif File.exist? File.join(settings.views, "layout.haml")
-          ret = :layout
+          :layout
         else
-          ret = false
+          false
         end
-        return ret
       end
     end
       
